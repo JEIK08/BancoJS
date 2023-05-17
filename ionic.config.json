@@ -1,0 +1,7 @@
+{
+  "name": "BancoJS",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
