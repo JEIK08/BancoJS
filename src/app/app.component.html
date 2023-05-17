@@ -1,3 +1,16 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-tabs>
+    <ion-router-outlet></ion-router-outlet>
+
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="totals">
+        <ion-icon name="cash-outline"></ion-icon>
+        <ion-label>Totales</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="transactions">
+        <ion-icon name="list-outline"></ion-icon>
+        <ion-label>Transacciones</ion-label>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
 </ion-app>
