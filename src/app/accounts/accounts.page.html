@@ -1,10 +1,16 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>Totales</ion-title>
+    <ion-title>Cuentas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="isFormOpen = true">
+        <ion-icon slot="icon-only" name="add-circle-sharp"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
   <ion-accordion-group multiple value="0">
     <ion-accordion toggleIconSlot="start" value="0">
       <ion-item slot="header" class="lvl-1">
@@ -104,6 +110,13 @@
       </ion-item>
     </ion-accordion>
   </ion-accordion-group>
+
+  <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
+    <ng-template>
+      <app-account-form></app-account-form>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>
 
 <ion-footer>
