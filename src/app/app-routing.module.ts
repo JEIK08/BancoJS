@@ -11,10 +11,10 @@ const routes: Routes = [
     loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsPageModule)
   },
   {
-    path: '',
+    path: '**',
     redirectTo: 'totals',
     pathMatch: 'full'
-  },
+  }
 ];
 
 @NgModule({
