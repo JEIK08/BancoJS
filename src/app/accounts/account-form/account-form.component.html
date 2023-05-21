@@ -4,39 +4,40 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-input label="Nombre" label-placement="floating"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-select label="Tipo de cuenta">
-        <ion-select-option [value]="true">Activa</ion-select-option>
-        <ion-select-option [value]="false">Pasiva</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-input label="Valor inicial" type="number" label-placement="floating"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input label="Deuda inicial" type="number" label-placement="floating"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-select label="Cuenta padre">
-        <ion-select-option value="true">Cuenta 1</ion-select-option>
-        <ion-select-option value="false">Cuenta 2</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-list>
-</ion-content>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ion-content>
+    <ion-list>
+      <ion-item>
+        <ion-input label="Nombre" label-placement="floating" formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Tipo de cuenta" formControlName="isActive">
+          <ion-select-option [value]="true">Activa</ion-select-option>
+          <ion-select-option [value]="false">Pasiva</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Valor inicial" type="number" label-placement="floating" formControlName="value"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Deuda inicial" type="number" label-placement="floating" formControlName="debt"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Cuenta padre" formControlName="account">
+          <!-- <ion-select-option value="true">Cuenta 1</ion-select-option> -->
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </ion-content>
 
-<ion-footer>
-  <ion-row>
-    <ion-col>
-      <ion-button expand="block" color="medium">Cancelar</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button expand="block">Crear</ion-button>
-    </ion-col>
-  </ion-row>
-</ion-footer>
+  <ion-footer>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" color="medium" (click)="onClose.emit()">Cancelar</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block" type="submit" [disabled]="form.invalid">Crear</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-footer>
+</form>

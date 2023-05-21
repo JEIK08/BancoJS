@@ -113,7 +113,7 @@
 
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
-      <app-account-form></app-account-form>
+      <app-account-form (onClose)="isFormOpen = false"></app-account-form>
     </ng-template>
   </ion-modal>
 

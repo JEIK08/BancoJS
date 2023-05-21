@@ -1,17 +1,18 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { TransactionsService } from './services/transactions.service';
+import { AppRoutingModule } from './app-routing.module';
+import { AccountService } from './services/accounts.service';
+import { FirebaseService } from './services/firebase.service';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +25,8 @@ import { environment } from 'src/environments/environment';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    TransactionsService
+    FirebaseService,
+    AccountService
   ],
   bootstrap: [AppComponent],
 })
