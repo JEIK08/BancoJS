@@ -10,8 +10,12 @@
 </ion-header>
 
 <ion-content>
+  
+  <ng-container *ngIf="accounts">
+    <app-account-item *ngFor="let account of accounts" [account]="account"></app-account-item>
+  </ng-container>
 
-  <ion-accordion-group multiple value="0">
+  <!-- <ion-accordion-group multiple value="0">
     <ion-accordion toggleIconSlot="start" value="0">
       <ion-item slot="header" class="lvl-1">
         <ion-label>Capital</ion-label>
@@ -92,15 +96,6 @@
       </ion-accordion-group>
     </ion-accordion>
 
-    <!-- <ion-accordion readonly toggleIconSlot="start" value="1">
-      <ion-item slot="header" class="lvl-1 hide-arrow">
-        <ion-label>Crédito</ion-label>
-        <ion-text class="red">
-          <span>$ 5,250,413.54</span>
-        </ion-text>
-      </ion-item>
-    </ion-accordion> -->
-
     <ion-accordion readonly toggleIconSlot="start" value="2">
       <ion-item slot="header" class="lvl-1 hide-arrow">
         <ion-label>Nequi</ion-label>
@@ -109,7 +104,7 @@
         </ion-text>
       </ion-item>
     </ion-accordion>
-  </ion-accordion-group>
+  </ion-accordion-group> -->
 
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>

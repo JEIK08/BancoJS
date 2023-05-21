@@ -1,0 +1,23 @@
+<ion-accordion-group multiple>
+  <ion-accordion readonly toggleIconSlot="start">
+    <ion-item slot="header" class="lvl-1 hide-arrow">
+      <ng-template [ngTemplateOutlet]="account.isActive ? activeTemplate : pasiveTemplate"></ng-template>
+    </ion-item>
+  </ion-accordion>
+</ion-accordion-group>
+
+<ng-template #activeTemplate>
+  <ion-label>
+    <span>{{ account.name }}</span>
+    <p *ngIf="account.debt" [ngClass]="realValue?.color">{{ realValue?.value | currency:'':'$ ':'1.2-2' }}</p>
+  </ion-label>
+  <ion-text>
+    <span class="green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
+    <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+  </ion-text>
+</ng-template>
+
+<ng-template #pasiveTemplate>
+  <ion-label>{{ account.name }}</ion-label>
+  <ion-text class="red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+</ng-template>

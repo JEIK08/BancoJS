@@ -19,7 +19,7 @@
       <ion-item>
         <ion-input label="Valor inicial" type="number" label-placement="floating" formControlName="value"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item *ngIf="form.value.isActive">
         <ion-input label="Deuda inicial" type="number" label-placement="floating" formControlName="debt"></ion-input>
       </ion-item>
       <ion-item>

@@ -2,6 +2,6 @@ export interface Account {
   name: string;
   isActive: boolean;
   value: number;
-  debt: number;
+  debt?: number;
   account?: Account;
 }

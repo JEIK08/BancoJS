@@ -11,13 +11,13 @@ import { Account } from '../interfaces/account';
 })
 export class AccountService {
 
-  public accountsSubject: BehaviorSubject<Account[] | null>;
+  public accountsSubject: BehaviorSubject<Account[] | undefined>;
 
   constructor(
     private firestore: Firestore,
     private firebaseService: FirebaseService
   ) {
-    this.accountsSubject = new BehaviorSubject<Account[] | null>(null);
+    this.accountsSubject = new BehaviorSubject<Account[] | undefined>(undefined);
     onSnapshot(collection(this.firestore, Collections.Account), () => this.updateAccounts());
   }
 
