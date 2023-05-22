@@ -5,4 +5,5 @@ export interface Account {
   value: number;
   debt?: number;
   account: Account | string | null;
+  innerAccounts?: Account[];
 }

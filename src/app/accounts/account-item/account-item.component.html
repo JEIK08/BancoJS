@@ -1,8 +1,17 @@
 <ion-accordion-group multiple>
-  <ion-accordion readonly toggleIconSlot="start">
-    <ion-item slot="header" class="lvl-1 hide-arrow">
+  <ion-accordion toggleIconSlot="start" [value]="account.id">
+    <ion-item slot="header" [ngClass]="[!account.innerAccounts?.length ? 'hide-arrow' : '', 'lvl-' + level]">
       <ng-template [ngTemplateOutlet]="account.isActive ? activeTemplate : pasiveTemplate"></ng-template>
     </ion-item>
+    <ng-container *ngIf="account.innerAccounts?.length">
+      <div slot="content">
+        <app-account-item
+          *ngFor="let innerAccount of account.innerAccounts"
+          [account]="innerAccount"
+          [level]="level + 1">
+        </app-account-item>
+      </div>
+    </ng-container>
   </ion-accordion>
 </ion-accordion-group>
 

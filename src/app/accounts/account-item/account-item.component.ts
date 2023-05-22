@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+
 import { Account } from 'src/app/interfaces/account';
 
 type ValueData = {
@@ -14,9 +15,11 @@ type ValueData = {
 export class AccountItemComponent implements OnInit {
 
   @Input() public account!: Account;
+  @Input() public level: number;
   public realValue?: ValueData;
 
   constructor() {
+    this.level = 1;
   }
 
   ngOnInit() {
