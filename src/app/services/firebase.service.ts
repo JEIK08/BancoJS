@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { DocumentSnapshot, QuerySnapshot } from '@angular/fire/firestore';
+
 export enum Collections {
   Account = 'Account'
 }
@@ -11,13 +13,11 @@ export class FirebaseService {
 
   constructor() { }
 
-  public mapDocs<T>({ docs }: any): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      if (Array.isArray(docs)) {
-        resolve(docs.map(doc => doc.data()) as T);
-      } else {
-        reject(docs);
-      }
+  public mapDocs<T extends { id: string }>({ docs }: QuerySnapshot<any>): T[] {
+    return docs.map(doc => {
+      const data = doc.data();
+      data.id = doc.id;
+      return data;
     });
   }
 

@@ -1,8 +1,10 @@
 import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 import { AccountService } from 'src/app/services/accounts.service';
+
+import { Account } from 'src/app/interfaces/account';
 
 @Component({
   selector: 'app-account-form',
@@ -14,35 +16,34 @@ export class AccountFormComponent implements OnDestroy {
   @Output('onClose') public onClose: EventEmitter<void>;
 
   public form: FormGroup;
+  public accounts?: Account[];
 
-  private changeSubs: Subscription;
+  private onDestroySub: Subject<void>;
 
   constructor(
     private accountService: AccountService,
     private formBuilder: FormBuilder
   ) {
     this.onClose = new EventEmitter;
+    this.onDestroySub = new Subject();
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
-      isActive: [true],
-      value: [0, Validators.required],
-      debt: [0],
+      isActive: [true, Validators.required],
       account: [null]
     });
-    this.form.get('debt')!.setValidators((control: AbstractControl) => {
-      return this.form.get('isActive')!.value ? Validators.required(control) : null;
-    })
-    this.changeSubs = this.form.get('isActive')!.valueChanges.subscribe((newIsActive: boolean) => {
-      this.form.get('debt')!.setValue(newIsActive ? 0 : null);
+    this.form.get('account')!.valueChanges.pipe(takeUntil(this.onDestroySub)).subscribe((newAccount: Account) => {
+      this.form.get('isActive')!.setValue(newAccount.isActive);
     });
+    this.accountService.getAccounts().pipe(takeUntil(this.onDestroySub)).subscribe(accounts => this.accounts = accounts);
   }
 
   onSubmit() {
-    this.accountService.createAccount(this.form.value).then(() => this.onClose.emit());
+    this.accountService.createAccount(this.form.getRawValue()).then(() => this.onClose.emit());
   }
 
   ngOnDestroy(): void {
-    this.changeSubs.unsubscribe();
+    this.onDestroySub.next();
+    this.onDestroySub.complete();
   }
 
 }

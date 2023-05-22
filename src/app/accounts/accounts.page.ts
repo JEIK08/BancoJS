@@ -16,7 +16,7 @@ export class AccountsPage {
   constructor(private accountsService: AccountService) {
     this.isFormOpen = false;
     this.accountsService.getAccounts().subscribe(accounts => {
-      console.log('New Accounts', accounts);
+      console.log('Update accounts list', accounts);
       this.accounts = accounts;
     });
   }
