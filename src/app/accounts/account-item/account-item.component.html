@@ -1,6 +1,6 @@
 <ion-accordion-group multiple>
   <ion-accordion toggleIconSlot="start" [value]="account.id">
-    <ion-item slot="header" [ngClass]="[!account.innerAccounts?.length ? 'hide-arrow' : '', 'lvl-' + level]">
+    <ion-item slot="header" [ngClass]="[!account.innerAccounts.length ? 'hide-arrow' : '', 'lvl-' + level]">
       <ng-template [ngTemplateOutlet]="account.isActive ? activeTemplate : pasiveTemplate"></ng-template>
     </ion-item>
     <ng-container *ngIf="account.innerAccounts?.length">
@@ -21,12 +21,12 @@
     <p *ngIf="account.debt" [ngClass]="realValue?.color">{{ realValue?.value | currency:'':'$ ':'1.2-2' }}</p>
   </ion-label>
   <ion-text>
-    <span class="green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
+    <span class="value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
     <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
   </ion-text>
 </ng-template>
 
 <ng-template #pasiveTemplate>
   <ion-label>{{ account.name }}</ion-label>
-  <ion-text class="red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+  <ion-text class="value red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
 </ng-template>

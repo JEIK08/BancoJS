@@ -18,12 +18,12 @@
       padding-left: #{$i*16}px;
     }
 
+    .value {
+      font-weight: #{700 - ($i*100)};
+    }
+
     ion-text {
       text-align: right;
-
-      > span {
-        font-weight: #{700 - ($i*100)};
-      }
     }
   }
 }

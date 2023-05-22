@@ -20,7 +20,15 @@
         <ion-select label="Cuenta padre" interface="popover" formControlName="account">
           <ng-container *ngIf="accounts">
             <ion-select-option [value]="null">No account</ion-select-option>
-            <ion-select-option *ngFor="let account of accounts" [value]="account">{{ account.name }}</ion-select-option>
+            <ng-container *ngFor="let account of accounts">
+              <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+              <ion-select-option
+                class="inner-account"
+                *ngFor="let innerAccount of account.innerAccounts"
+                [value]="innerAccount">
+                {{ innerAccount.name }}
+              </ion-select-option>
+            </ng-container>
           </ng-container>
         </ion-select>
       </ion-item>

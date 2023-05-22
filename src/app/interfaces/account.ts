@@ -4,6 +4,6 @@ export interface Account {
   isActive: boolean;
   value: number;
   debt?: number;
-  account: Account | string | null;
-  innerAccounts?: Account[];
+  account: Account;
+  innerAccounts: Account[];
 }
