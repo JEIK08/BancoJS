@@ -5,4 +5,15 @@
 </ion-header>
 
 <ion-content>
+  <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
+    <ng-template>
+      <app-transaction-form (onClose)="isFormOpen = false"></app-transaction-form>
+    </ng-template>
+  </ion-modal>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" (click)="isFormOpen = true">
+  <ion-fab-button>
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

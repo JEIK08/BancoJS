@@ -7,6 +7,10 @@ import { Component } from '@angular/core';
 })
 export class TransactionsPage {
 
-  constructor() { }
+  public isFormOpen: boolean;
+
+  constructor() {
+    this.isFormOpen = true;
+  }
 
 }

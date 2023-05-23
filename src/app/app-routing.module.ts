@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'totals',
+    path: 'accounts',
     loadChildren: () => import('./accounts/accounts.module').then(m => m.AccountsPageModule)
   },
   {
@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'totals',
+    redirectTo: 'transactions',
     pathMatch: 'full'
   }
 ];

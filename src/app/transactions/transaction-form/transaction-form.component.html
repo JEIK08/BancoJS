@@ -1,0 +1,124 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Nueva transacción</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ion-content>
+    <ion-list>
+      <ion-item>
+        <ion-row style="width: 100%;">
+          <ion-col size="4">
+            <ion-button
+              size="default"
+              expand="block"
+              color="danger"
+              [fill]="form.value.type === TransactionType.OUT ? 'solid' : 'outline'"
+              (click)="form.controls['type'].setValue(TransactionType.OUT)">
+              Gasto
+            </ion-button>
+          </ion-col>
+          <ion-col size="4">
+            <ion-button
+              size="default"
+              expand="block"
+              color="success"
+              [fill]="form.value.type === TransactionType.IN ? 'solid' : 'outline'"
+              (click)="form.controls['type'].setValue(TransactionType.IN)">
+              Ingreso
+            </ion-button>
+          </ion-col>
+          <ion-col size="4">
+            <ion-button
+              size="default"
+              expand="block"
+              [fill]="form.value.type === TransactionType.TRANSFER ? 'solid' : 'outline'"
+              (click)="form.controls['type'].setValue(TransactionType.TRANSFER)">
+              Transferir
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+      <ion-item>
+        <ion-input label-placement="floating" label="Descripción" formControlName="description"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label-placement="floating" label="Valor" type="number" formControlName="value"></ion-input>
+      </ion-item>
+      <ion-item button (click)="initCalendarDate()">
+        <ion-icon name="calendar-outline" class="ion-margin-end"></ion-icon>
+        <ion-text class="ion-margin-end">{{ form.value.date | date:'dd/MM/yyyy' }}</ion-text>
+        <ion-icon name="time-outline" class="ion-margin-horizontal"></ion-icon>
+        <ion-text>{{ form.value.date | date:'hh:mm a' }}</ion-text>
+        <ion-modal
+          [isOpen]="!!calendarInitialDate"
+          [initialBreakpoint]="1"
+          [breakpoints]="[0, 1]"
+          (didDismiss)="calendarInitialDate = undefined">
+          <ng-template>
+            <ion-datetime
+              hourCycle="h12"
+              cancelText="Cancelar"
+              doneText="Aceptar"
+              [value]="calendarInitialDate"
+              [showDefaultButtons]="true"
+              (ionChange)="setDate($event)">
+              <span slot="time-label">Hora</span>
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-item>
+      <ion-item>
+        <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['account'], label: 'Cuenta de origen' }"></ng-container>
+      </ion-item>
+      <ng-container *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
+        <ion-item>
+          <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['activeAccount'], label: 'Cuenta activa' }"></ng-container>
+        </ion-item>
+        <ion-item *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
+          <ion-input label-placement="floating" label="Cuotas" type="number"></ion-input>
+        </ion-item>
+      </ng-container>
+      <ng-container *ngIf="form.value.type === TransactionType.TRANSFER">
+        <ion-item>
+          <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['destination'], label: 'Cuenta de destino' }"></ng-container>
+        </ion-item>
+        <ion-item *ngIf="form.value.type === TransactionType.TRANSFER">
+          <ion-toggle formControlName="affectDebts">Afectar deudas</ion-toggle>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+  </ion-content>
+
+  <ion-footer>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" color="medium" (click)="onClose.emit()">Cancelar</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block" type="submit" [disabled]="form.invalid">Crear</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-footer>
+</form>
+
+<ng-template #accountSelect let-control let-text="label">
+  <ion-select interface="popover" [label]="text" [formControl]="control">
+    <ng-container *ngFor="let account of accounts">
+      <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+      <ng-container *ngFor="let innerAccount of account.innerAccounts">
+        <ion-select-option class="inner-account" [value]="innerAccount">{{ innerAccount.name }}</ion-select-option>
+        <ng-container *ngFor="let lastInnerAccount of innerAccount.innerAccounts">
+          <ion-select-option class="inner-account plus" [value]="lastInnerAccount">{{ lastInnerAccount.name }}</ion-select-option>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ion-select>
+  <ion-icon
+    *ngIf="control.value"
+    name="close-circle-outline"
+    slot="end"
+    (click)="control.setValue(null)">
+  </ion-icon>
+</ng-template>

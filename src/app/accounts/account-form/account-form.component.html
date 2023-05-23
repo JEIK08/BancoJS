@@ -11,25 +11,28 @@
         <ion-input label="Nombre" label-placement="floating" formControlName="name"></ion-input>
       </ion-item>
       <ion-item>
+        <ion-select label="Cuenta padre" interface="popover" formControlName="account">
+          <ng-container *ngFor="let account of accounts">
+            <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+            <ion-select-option
+              class="inner-account"
+              *ngFor="let innerAccount of account.innerAccounts"
+              [value]="innerAccount">
+              {{ innerAccount.name }}
+            </ion-select-option>
+          </ng-container>
+        </ion-select>
+        <ion-icon
+          *ngIf="form.value.account"
+          name="close-circle-outline"
+          slot="end"
+          (click)="form.controls['account'].setValue(null)">
+        </ion-icon>
+      </ion-item>
+      <ion-item>
         <ion-select label="Tipo de cuenta" formControlName="isActive" [disabled]="form.value.account">
           <ion-select-option [value]="true">Activa</ion-select-option>
           <ion-select-option [value]="false">Pasiva</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-select label="Cuenta padre" interface="popover" formControlName="account">
-          <ng-container *ngIf="accounts">
-            <ion-select-option [value]="null">No account</ion-select-option>
-            <ng-container *ngFor="let account of accounts">
-              <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
-              <ion-select-option
-                class="inner-account"
-                *ngFor="let innerAccount of account.innerAccounts"
-                [value]="innerAccount">
-                {{ innerAccount.name }}
-              </ion-select-option>
-            </ng-container>
-          </ng-container>
         </ion-select>
       </ion-item>
     </ion-list>

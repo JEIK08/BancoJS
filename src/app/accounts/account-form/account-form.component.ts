@@ -24,15 +24,15 @@ export class AccountFormComponent implements OnDestroy {
     private accountService: AccountService,
     private formBuilder: FormBuilder
   ) {
-    this.onClose = new EventEmitter;
+    this.onClose = new EventEmitter();
     this.onDestroySub = new Subject();
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
-      isActive: [true, Validators.required],
-      account: [null]
+      account: [null],
+      isActive: [true, Validators.required]
     });
     this.form.get('account')!.valueChanges.pipe(takeUntil(this.onDestroySub)).subscribe((newAccount: Account) => {
-      this.form.get('isActive')!.setValue(newAccount.isActive);
+      if (newAccount) this.form.get('isActive')!.setValue(newAccount.isActive);
     });
     this.accountService.getAccounts().pipe(takeUntil(this.onDestroySub)).subscribe(accounts => this.accounts = accounts);
   }
