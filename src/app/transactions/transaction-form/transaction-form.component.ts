@@ -1,11 +1,12 @@
 import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject, merge, takeUntil } from 'rxjs';
 
 import { AccountService } from 'src/app/services/accounts.service';
 
 import { Account } from 'src/app/interfaces/account';
 import { TransactionType } from 'src/app/interfaces/transaction';
+import { TransactionsService } from 'src/app/services/transactions.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -14,7 +15,7 @@ import { TransactionType } from 'src/app/interfaces/transaction';
 })
 export class TransactionFormComponent implements OnDestroy {
 
-  @Output('onClose') public onClose: EventEmitter<void>; 
+  @Output('onClose') public onClose: EventEmitter<void>;
 
   public form: FormGroup;
   public calendarInitialDate?: string;
@@ -26,6 +27,7 @@ export class TransactionFormComponent implements OnDestroy {
 
   constructor(
     private accountService: AccountService,
+    private transactionsService: TransactionsService,
     private formBuilder: FormBuilder
   ) {
     this.onClose = new EventEmitter();
@@ -43,16 +45,27 @@ export class TransactionFormComponent implements OnDestroy {
       activeAccount: [null],
       installments: [null],
       destination: [null],
-      affectDebts: [true]
+      affectDebts: [true],
+      showAffectDebts: [false]
     });
 
     this.form.get('type')?.valueChanges.pipe(takeUntil(this.onDestroySubject)).subscribe((newType: TransactionType) => {
       this.form.get('destination')?.setValidators(newType == TransactionType.TRANSFER ? Validators.required : null);
     });
+    merge(this.form.get('account')!.valueChanges, this.form.get('destination')!.valueChanges).subscribe((x) => {
+      setTimeout(() => {
+        if (this.form.value.type != TransactionType.TRANSFER) {
+          this.form.get('showAffectDebts')!.setValue(false);
+          return;
+        }
+        this.form.get('showAffectDebts')!.setValue(this.form.value.account && this.form.value.destination
+          && this.form.value.account.isActive != this.form.value.destination.isActive);
+      });
+    });
   }
 
   initCalendarDate() {
-    this.calendarInitialDate = (new Date((this.form.get('date')?.value as Date).getTime() - this.timeZoneOffset)).toISOString();
+    this.calendarInitialDate = (new Date((this.form.value.date as Date).getTime() - this.timeZoneOffset)).toISOString();
   }
 
   setDate(event: any) {
@@ -60,7 +73,7 @@ export class TransactionFormComponent implements OnDestroy {
   }
 
   onSubmit() {
-
+    this.transactionsService.createTransaction(this.form.value);
   }
 
   ngOnDestroy() {

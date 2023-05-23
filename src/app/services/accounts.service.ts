@@ -10,10 +10,10 @@ import { Account } from '../interfaces/account';
 })
 export class AccountService {
 
-  private accountsSubject: BehaviorSubject<Account[] | undefined>;
+  private accountsSubject: BehaviorSubject<Account[]>;
 
   constructor(private firebaseService: FirebaseService) {
-    this.accountsSubject = new BehaviorSubject<Account[] | undefined>(undefined);
+    this.accountsSubject = new BehaviorSubject<Account[]>([]);
     this.firebaseService.listenCollection(Collection.Account, () => this.updateAccounts());
   }
 

@@ -70,21 +70,27 @@
         </ion-modal>
       </ion-item>
       <ion-item>
-        <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['account'], label: 'Cuenta de origen' }"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['account'], label: 'Cuenta de origen' }">
+        </ng-container>
       </ion-item>
       <ng-container *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
         <ion-item>
-          <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['activeAccount'], label: 'Cuenta activa' }"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['activeAccount'], label: 'Cuenta activa' }">
+          </ng-container>
         </ion-item>
-        <ion-item *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
+        <ion-item *ngIf="form.value.type === TransactionType.OUT && !form.value.account?.isActive">
           <ion-input label-placement="floating" label="Cuotas" type="number"></ion-input>
         </ion-item>
       </ng-container>
       <ng-container *ngIf="form.value.type === TransactionType.TRANSFER">
         <ion-item>
-          <ng-container *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['destination'], label: 'Cuenta de destino' }"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['destination'], label: 'Cuenta de destino' }">
+          </ng-container>
         </ion-item>
-        <ion-item *ngIf="form.value.type === TransactionType.TRANSFER">
+        <ion-item *ngIf="form.value.showAffectDebts">
           <ion-toggle formControlName="affectDebts">Afectar deudas</ion-toggle>
         </ion-item>
       </ng-container>
@@ -108,7 +114,9 @@
     <ng-container *ngFor="let account of accounts">
       <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
       <ng-container *ngFor="let innerAccount of account.innerAccounts">
-        <ion-select-option class="inner-account" [value]="innerAccount">{{ innerAccount.name }}</ion-select-option>
+        <ion-select-option class="inner-account" [value]="innerAccount">
+          {{ innerAccount.name }}
+        </ion-select-option>
         <ng-container *ngFor="let lastInnerAccount of innerAccount.innerAccounts">
           <ion-select-option class="inner-account plus" [value]="lastInnerAccount">{{ lastInnerAccount.name }}</ion-select-option>
         </ng-container>

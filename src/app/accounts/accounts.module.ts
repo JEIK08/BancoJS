@@ -13,7 +13,7 @@ import { AccountItemComponent } from './account-item/account-item.component';
   imports: [
     SharedModule,
     IonicModule,
-    AccountsPageRoutingModule,
+    AccountsPageRoutingModule
   ],
   declarations: [
     AccountsPage,
