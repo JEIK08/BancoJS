@@ -70,20 +70,20 @@
         </ion-modal>
       </ion-item>
       <ion-item>
-        <app-accounts-select-options
+        <!-- <app-accounts-select-options
           label="Cuenta de origen"
           formControlName="account"
           [accounts]="accounts"
           [allowClear]="false">
-        </app-accounts-select-options>
+        </app-accounts-select-options> -->
       </ion-item>
       <ng-container *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
         <ion-item>
-          <app-accounts-select-options
+          <!-- <app-accounts-select-options
             label="Cuenta activa"
             formControlName="activeAccount"
             [accounts]="activeAccounts">
-          </app-accounts-select-options>
+          </app-accounts-select-options> -->
         </ion-item>
         <ion-item *ngIf="form.value.type === TransactionType.OUT && !form.value.account?.isActive">
           <ion-input label-placement="floating" label="Cuotas" type="number"></ion-input>
@@ -91,11 +91,11 @@
       </ng-container>
       <ng-container *ngIf="form.value.type === TransactionType.TRANSFER">
         <ion-item>
-          <app-accounts-select-options
+          <!-- <app-accounts-select-options
             label="Cuenta de destino"
             formControlName="destination"
             [accounts]="accounts">
-          </app-accounts-select-options>
+          </app-accounts-select-options> -->
         </ion-item>
         <ion-item *ngIf="form.value.showAffectDebts">
           <ion-toggle formControlName="affectDebts">Afectar deudas</ion-toggle>

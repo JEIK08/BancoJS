@@ -25,13 +25,13 @@ export class FirebaseService {
     onSnapshot(this.getCollectionRef(collectionName), snapshot => onChange(snapshot));
   }
 
-  getDocuments<T>(collectionName: Collection, mapFunction: (doc: T) => void): Promise<T[]> {
+  getDocuments<T>(collectionName: Collection/* , mapFunction?: (doc: T) => void */): Promise<T[]> {
     return getDocs(query(this.getCollectionRef(collectionName))).then(({ docs }) => new Promise(resolve => {
       resolve(
         docs.map(docRef => {
           const doc: any = docRef.data();
           doc.id = docRef.id;
-          mapFunction(doc);
+          // mapFunction?.(doc);
           return doc;
         })
       );

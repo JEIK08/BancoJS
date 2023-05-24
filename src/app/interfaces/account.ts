@@ -3,7 +3,11 @@ export interface Account {
   name: string;
   isActive: boolean;
   value: number;
-  debt?: number;
-  account: Account;
-  innerAccounts: Account[];
+  debt: number;
+  pockets: Pocket[];
+}
+
+export interface Pocket {
+  name: string;
+  value: number;
 }

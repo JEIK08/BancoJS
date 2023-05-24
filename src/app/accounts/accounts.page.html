@@ -10,9 +10,31 @@
 </ion-header>
 
 <ion-content>
-  <ng-container *ngIf="accounts">
-    <app-account-item *ngFor="let account of accounts" [account]="account"></app-account-item>
-  </ng-container>
+  <ion-accordion-group multiple>
+    <ion-accordion *ngFor="let account of accounts" toggleIconSlot="start" [value]="account.id">
+      <ion-item slot="header">
+        <ion-label>
+          <span>{{ account.name }}</span>
+          <p class="green" *ngIf="account.debt">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
+        </ion-label>
+        <ion-text>
+          <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
+          <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+        </ion-text>
+      </ion-item>
+      <ion-list slot="content">
+        <ion-item *ngIf="account.debt">
+          <ion-label>Deuda</ion-label>
+          <ion-text class="red">{{ account.debt | currency:'':'$ ':'1.2-2' }}</ion-text>
+        </ion-item>
+        <ion-item *ngFor="let pocket of account.pockets">
+          <ion-label>{{ pocket.name }}</ion-label>
+          <ion-text class="green">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+        </ion-item>
+      </ion-list>
+    </ion-accordion>
+  </ion-accordion-group>
+
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
       <app-account-form (onClose)="isFormOpen = false"></app-account-form>
