@@ -37,7 +37,7 @@ export class AccountFormComponent {
   }
 
   onSubmit() {
-    this.accountService.createAccount(this.form.getRawValue(), this.pockets).then(() => this.onClose.emit());
+    this.accountService.createAccount(this.form.getRawValue(), this.form.value.isActive ? this.pockets : null).then(() => this.onClose.emit());
   }
 
 }

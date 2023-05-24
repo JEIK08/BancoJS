@@ -11,22 +11,24 @@
         <ion-input label="Nombre" label-placement="floating" formControlName="name"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-select label="Tipo de cuenta" formControlName="isActive" [disabled]="form.value.account">
+        <ion-select label="Tipo de cuenta" interface="popover" formControlName="isActive" [disabled]="form.value.account">
           <ion-select-option [value]="true">Activa</ion-select-option>
           <ion-select-option [value]="false">Pasiva</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-label color="primary" style="font-weight: bold">Bolsillos</ion-label>
-      </ion-item>
-      <ion-item *ngFor="let pocket of pockets; index as i">
-        <ion-label>{{ pocket }}</ion-label>
-        <ion-icon slot="end" name="close-outline" (click)="pockets.splice(i, 1)"></ion-icon>
-      </ion-item>
-      <ion-item>
-        <ion-input label="Nombre" label-placement="floating" [ngModelOptions]="{standalone: true}" [(ngModel)]="pocketName"></ion-input>
-        <ion-icon slot="end" name="add-circle-outline" (click)="addPocket()"></ion-icon>
-      </ion-item>
+      <ng-container *ngIf="form.value.isActive">
+        <ion-item>
+          <ion-label color="primary" style="font-weight: bold">Bolsillos</ion-label>
+        </ion-item>
+        <ion-item *ngFor="let pocket of pockets; index as i">
+          <ion-label>{{ pocket }}</ion-label>
+          <ion-icon slot="end" name="close-outline" (click)="pockets.splice(i, 1)"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Nombre" label-placement="floating" [ngModelOptions]="{standalone: true}" [(ngModel)]="pocketName"></ion-input>
+          <ion-icon slot="end" name="add-circle-outline" (click)="addPocket()"></ion-icon>
+        </ion-item>
+      </ng-container>
     </ion-list>
   </ion-content>
 

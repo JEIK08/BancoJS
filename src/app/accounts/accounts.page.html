@@ -10,19 +10,35 @@
 </ion-header>
 
 <ion-content>
+  <ng-template #activeTemplate let-account>
+    <ion-label>
+      <span>{{ account.name }}</span>
+      <p class="green" *ngIf="account.debt">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
+    </ion-label>
+    <ion-text>
+      <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
+      <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+    </ion-text>
+  </ng-template>
+
+  <ng-template #pasiveTemplate let-account>
+    <ion-label>{{ account.name }}</ion-label>
+    <ion-text class="bold-value red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+  </ng-template>
+
   <ion-accordion-group multiple>
-    <ion-accordion *ngFor="let account of accounts" toggleIconSlot="start" [value]="account.id">
+    <ion-accordion
+      *ngFor="let account of accounts"
+      toggleIconSlot="start"
+      [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
+      [readonly]="!account.isActive"
+      [value]="account.id">
       <ion-item slot="header">
-        <ion-label>
-          <span>{{ account.name }}</span>
-          <p class="green" *ngIf="account.debt">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
-        </ion-label>
-        <ion-text>
-          <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
-          <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
-        </ion-text>
+        <ng-container
+          *ngTemplateOutlet="account.isActive ? activeTemplate : pasiveTemplate; context: { $implicit: account }">
+        </ng-container>
       </ion-item>
-      <ion-list slot="content">
+      <ion-list slot="content" *ngIf="account.isActive">
         <ion-item *ngIf="account.debt">
           <ion-label>Deuda</ion-label>
           <ion-text class="red">{{ account.debt | currency:'':'$ ':'1.2-2' }}</ion-text>

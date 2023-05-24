@@ -3,8 +3,8 @@ export interface Account {
   name: string;
   isActive: boolean;
   value: number;
-  debt: number;
-  pockets: Pocket[];
+  debt?: number;
+  pockets?: Pocket[];
 }
 
 export interface Pocket {

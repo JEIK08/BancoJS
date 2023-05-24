@@ -25,12 +25,14 @@ export class AccountService {
     return this.accountsSubject;
   }
 
-  createAccount(accountData: any, pockets: string[]) {
+  createAccount(accountData: any, pockets: string[] | null) {
     const account: Account = accountData;
     account.value = 0;
-    account.debt = 0;
-    account.pockets = pockets.map(pocket => ({ name: pocket, value: 0 }));
-    account.pockets.unshift({ name: 'Disponible', value: 0 });
+    if (pockets) {
+      account.debt = 0;
+      account.pockets = pockets.map(pocket => ({ name: pocket, value: 0 }));
+      account.pockets.unshift({ name: 'Disponible', value: 0 });
+    }
     return this.firebaseService.addDocument(Collection.Account, accountData);
   }
 
