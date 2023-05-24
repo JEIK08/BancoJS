@@ -4,39 +4,37 @@
   </ion-toolbar>
 </ion-header>
 
+<ng-template #typeButton let-type let-color="color" let-text="text">
+  <ion-button
+    size="default"
+    expand="block"
+    [color]="color"
+    [fill]="form.value.type === type ? 'solid' : 'outline'"
+    (click)="setTransactionType(type)">
+    {{ text }}
+  </ion-button>
+</ng-template>
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <ion-content>
     <ion-list>
       <ion-item>
         <ion-row style="width: 100%;">
           <ion-col size="4">
-            <ion-button
-              size="default"
-              expand="block"
-              color="danger"
-              [fill]="form.value.type === TransactionType.OUT ? 'solid' : 'outline'"
-              (click)="form.controls['type'].setValue(TransactionType.OUT)">
-              Gasto
-            </ion-button>
+            <ng-container *ngTemplateOutlet="typeButton; context: {
+              $implicit: TransactionType.OUT, color: 'danger', text: 'Gasto'
+            }"></ng-container>
           </ion-col>
           <ion-col size="4">
-            <ion-button
-              size="default"
-              expand="block"
-              color="success"
-              [fill]="form.value.type === TransactionType.IN ? 'solid' : 'outline'"
-              (click)="form.controls['type'].setValue(TransactionType.IN)">
-              Ingreso
-            </ion-button>
+            <ng-container *ngTemplateOutlet="typeButton; context: {
+              $implicit: TransactionType.IN, color: 'success', text: 'Ingreso'
+            }"></ng-container>
           </ion-col>
           <ion-col size="4">
-            <ion-button
-              size="default"
-              expand="block"
-              [fill]="form.value.type === TransactionType.TRANSFER ? 'solid' : 'outline'"
-              (click)="form.controls['type'].setValue(TransactionType.TRANSFER)">
-              Transferir
-            </ion-button>
+            <ng-container *ngTemplateOutlet="typeButton; context: {
+              $implicit: TransactionType.TRANSFER, color: 'primary', text: 'Transferir'
+            }"></ng-container>
+
           </ion-col>
         </ion-row>
       </ion-item>
@@ -69,36 +67,31 @@
           </ng-template>
         </ion-modal>
       </ion-item>
-      <ion-item>
-        <!-- <app-accounts-select-options
-          label="Cuenta de origen"
-          formControlName="account"
-          [accounts]="accounts"
-          [allowClear]="false">
-        </app-accounts-select-options> -->
-      </ion-item>
-      <ng-container *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
+      <ng-container formGroupName="origin">
         <ion-item>
-          <!-- <app-accounts-select-options
-            label="Cuenta activa"
-            formControlName="activeAccount"
-            [accounts]="activeAccounts">
-          </app-accounts-select-options> -->
+          <ion-select label="Cuenta de origen" interface="popover" formControlName="account">
+            <ion-select-option *ngFor="let account of accounts" [value]="account">{{ account.name }}</ion-select-option>
+          </ion-select>
         </ion-item>
-        <ion-item *ngIf="form.value.type === TransactionType.OUT && !form.value.account?.isActive">
-          <ion-input label-placement="floating" label="Cuotas" type="number"></ion-input>
+        <ion-item *ngIf="form.value.origin.account?.isActive">
+          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+            <ion-select-option *ngFor="let pocket of form.value.origin.account.pockets" [value]="pocket">{{ pocket.name }}</ion-select-option>
+          </ion-select>
         </ion-item>
       </ng-container>
-      <ng-container *ngIf="form.value.type === TransactionType.TRANSFER">
+      <ng-container formGroupName="destination" *ngIf="showDestination">
         <ion-item>
-          <!-- <app-accounts-select-options
-            label="Cuenta de destino"
-            formControlName="destination"
-            [accounts]="accounts">
-          </app-accounts-select-options> -->
+          <ion-select
+            [label]="'Cuenta ' + (form.value.type === TransactionType.OUT ? 'afectada' : 'de Destino')"
+            interface="popover"
+            formControlName="account">
+            <ion-select-option *ngFor="let account of destinationAccounts" [value]="account">{{ account.name }}</ion-select-option>
+          </ion-select>
         </ion-item>
-        <ion-item *ngIf="form.value.showAffectDebts">
-          <ion-toggle formControlName="affectDebts">Afectar deudas</ion-toggle>
+        <ion-item *ngIf="form.value.destination.account?.isActive">
+          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+            <ion-select-option *ngFor="let pocket of form.value.destination.account.pockets" [value]="pocket">{{ pocket.name }}</ion-select-option>
+          </ion-select>
         </ion-item>
       </ng-container>
     </ion-list>
