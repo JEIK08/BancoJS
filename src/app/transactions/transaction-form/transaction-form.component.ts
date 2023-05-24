@@ -20,7 +20,8 @@ export class TransactionFormComponent implements OnDestroy {
   public form: FormGroup;
   public calendarInitialDate?: string;
   public timeZoneOffset: number;
-  public accounts!: Account[];
+  public accounts?: Account[];
+  public activeAccounts?: Account[];
   public TransactionType: typeof TransactionType;
 
   private onDestroySubject: Subject<void>;
@@ -33,7 +34,10 @@ export class TransactionFormComponent implements OnDestroy {
     this.onClose = new EventEmitter();
     const today = new Date();
     this.timeZoneOffset = today.getTimezoneOffset() * 60 * 1000;
-    this.accountService.getAccounts().subscribe(accounts => this.accounts = accounts!);
+    this.accountService.getAccounts().subscribe(accounts => {
+      this.accounts = accounts;
+      this.activeAccounts = accounts.filter(({ isActive }) => isActive);
+    });
     this.TransactionType = TransactionType;
     this.onDestroySubject = new Subject();
     this.form = this.formBuilder.group({

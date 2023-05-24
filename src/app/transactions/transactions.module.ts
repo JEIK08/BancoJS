@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { IonicModule } from '@ionic/angular';
-
 import { TransactionsPageRoutingModule } from './transactions-routing.module';
 
 import { SharedModule } from '../shared/shared/shared.module';
@@ -13,7 +11,6 @@ import { TransactionFormComponent } from './transaction-form/transaction-form.co
 @NgModule({
   imports: [
     SharedModule,
-    IonicModule,
     TransactionsPageRoutingModule
   ],
   declarations: [

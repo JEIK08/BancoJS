@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { IonicModule } from '@ionic/angular';
-
 import { SharedModule } from '../shared/shared/shared.module';
 import { AccountsPageRoutingModule } from './accounts-routing.module';
 
@@ -12,7 +10,6 @@ import { AccountItemComponent } from './account-item/account-item.component';
 @NgModule({
   imports: [
     SharedModule,
-    IonicModule,
     AccountsPageRoutingModule
   ],
   declarations: [

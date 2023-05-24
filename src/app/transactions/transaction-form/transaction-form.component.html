@@ -70,15 +70,20 @@
         </ion-modal>
       </ion-item>
       <ion-item>
-        <ng-container
-          *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['account'], label: 'Cuenta de origen' }">
-        </ng-container>
+        <app-accounts-select-options
+          label="Cuenta de origen"
+          formControlName="account"
+          [accounts]="accounts"
+          [allowClear]="false">
+        </app-accounts-select-options>
       </ion-item>
       <ng-container *ngIf="form.value.type === TransactionType.OUT && form.value.account?.isActive === false">
         <ion-item>
-          <ng-container
-            *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['activeAccount'], label: 'Cuenta activa' }">
-          </ng-container>
+          <app-accounts-select-options
+            label="Cuenta activa"
+            formControlName="activeAccount"
+            [accounts]="activeAccounts">
+          </app-accounts-select-options>
         </ion-item>
         <ion-item *ngIf="form.value.type === TransactionType.OUT && !form.value.account?.isActive">
           <ion-input label-placement="floating" label="Cuotas" type="number"></ion-input>
@@ -86,9 +91,11 @@
       </ng-container>
       <ng-container *ngIf="form.value.type === TransactionType.TRANSFER">
         <ion-item>
-          <ng-container
-            *ngTemplateOutlet="accountSelect; context: { $implicit: form.controls['destination'], label: 'Cuenta de destino' }">
-          </ng-container>
+          <app-accounts-select-options
+            label="Cuenta de destino"
+            formControlName="destination"
+            [accounts]="accounts">
+          </app-accounts-select-options>
         </ion-item>
         <ion-item *ngIf="form.value.showAffectDebts">
           <ion-toggle formControlName="affectDebts">Afectar deudas</ion-toggle>
@@ -108,25 +115,3 @@
     </ion-row>
   </ion-footer>
 </form>
-
-<ng-template #accountSelect let-control let-text="label">
-  <ion-select interface="popover" [label]="text" [formControl]="control">
-    <ng-container *ngFor="let account of accounts">
-      <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
-      <ng-container *ngFor="let innerAccount of account.innerAccounts">
-        <ion-select-option class="inner-account" [value]="innerAccount">
-          {{ innerAccount.name }}
-        </ion-select-option>
-        <ng-container *ngFor="let lastInnerAccount of innerAccount.innerAccounts">
-          <ion-select-option class="inner-account plus" [value]="lastInnerAccount">{{ lastInnerAccount.name }}</ion-select-option>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-  </ion-select>
-  <ion-icon
-    *ngIf="control.value"
-    name="close-circle-outline"
-    slot="end"
-    (click)="control.setValue(null)">
-  </ion-icon>
-</ng-template>
