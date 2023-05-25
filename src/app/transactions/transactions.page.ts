@@ -10,7 +10,7 @@ export class TransactionsPage {
   public isFormOpen: boolean;
 
   constructor() {
-    this.isFormOpen = true;
+    this.isFormOpen = false;
   }
 
 }

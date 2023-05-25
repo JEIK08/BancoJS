@@ -23,6 +23,8 @@ export class TransactionFormComponent implements OnDestroy {
   public accounts?: Account[];
   public destinationAccounts?: Account[];
   public showDestination: boolean;
+  public showToast: boolean;
+  public loading: boolean;
 
   private activeAccounts?: Account[];
   private onDestroySubject: Subject<void>;
@@ -37,6 +39,8 @@ export class TransactionFormComponent implements OnDestroy {
     const today = new Date();
     this.timeZoneOffset = today.getTimezoneOffset() * 60 * 1000;
     this.showDestination = false;
+    this.showToast = false;
+    this.loading = false;
     this.onDestroySubject = new Subject();
     this.accountService.getAccounts().subscribe(accounts => {
       this.accounts = accounts;
@@ -59,6 +63,10 @@ export class TransactionFormComponent implements OnDestroy {
 
     this.form.get('destination')!.setValidators((control: AbstractControl) => this.requiredDestinationAccount(control));
 
+    this.form.get('type')!.valueChanges.pipe(takeUntil(this.onDestroySubject)).subscribe(() => {
+      this.form.get('destination.account')!.setValue(null);
+      if (this.form.value.origin.pocket === 0) this.form.get('origin.pocket')!.setValue(this.form.value.origin.account.pockets[0]);
+    });
     this.form.get('origin.account')!.valueChanges.pipe(takeUntil(this.onDestroySubject)).subscribe((newAccount: Account) => {
       this.form.get('origin.pocket')!.setValue(newAccount.isActive ? newAccount.pockets![0] : null);
     });
@@ -94,12 +102,11 @@ export class TransactionFormComponent implements OnDestroy {
             break;
         }
 
-        if ((this.showDestination && !newShowDestination) || this.destinationAccounts !== newDestinationAccounts) {
-          this.form.get('destination.account')!.setValue(null);
-        }
+        const toHideDestination = this.showDestination && !newShowDestination;
         this.showDestination = newShowDestination;
         this.destinationAccounts = newDestinationAccounts;
-        this.form.get('destination')!.updateValueAndValidity();
+        if (toHideDestination) this.form.get('destination.account')!.setValue(null);
+        else this.form.get('destination')!.updateValueAndValidity();
       });
   }
 
@@ -124,7 +131,13 @@ export class TransactionFormComponent implements OnDestroy {
   }
 
   onSubmit() {
-    this.transactionsService.createTransaction(this.form.value);
+    const { type, origin: { account: origin }, destination: { account: destination } } = this.form.value;
+    if (type == TransactionType.TRANSFER && origin === destination) {
+      this.showToast = true;
+      return;
+    }
+    this.loading = true;
+    this.transactionsService.createTransaction(this.form.getRawValue()).then(() => this.onClose.emit());
   }
 
   ngOnDestroy() {

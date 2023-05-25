@@ -15,7 +15,7 @@
       <span>{{ account.name }}</span>
       <p class="green" *ngIf="account.debt">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
     </ion-label>
-    <ion-text>
+    <ion-text class="ion-text-end">
       <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
       <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
     </ion-text>
@@ -26,7 +26,7 @@
     <ion-text class="bold-value red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
   </ng-template>
 
-  <ion-accordion-group multiple>
+  <ion-accordion-group multiple *ngIf="accounts" [value]="accordeonValues">
     <ion-accordion
       *ngFor="let account of accounts"
       toggleIconSlot="start"

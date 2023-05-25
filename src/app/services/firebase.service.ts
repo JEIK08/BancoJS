@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Firestore, doc, getDoc, getDocs, query, collection, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
 
 export enum Collection {
-  Account = 'Account'
+  Account = 'Account',
+  Transaction = 'Transaction'
 }
 
 @Injectable({
@@ -50,8 +51,8 @@ export class FirebaseService {
     return addDoc(this.getCollectionRef(collectionName), data);
   }
 
-  updateDocument(collectionName: Collection, id: string, data: any) {
-    return updateDoc(this.getDocumentRef(collectionName, id), data);
+  updateDocument<T>(collectionName: Collection, id: string, data: { [key in keyof T]?: T[key] }) {
+    return updateDoc(this.getDocumentRef(collectionName, id) as any, data as any);
   }
 
 }

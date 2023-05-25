@@ -75,6 +75,7 @@
         </ion-item>
         <ion-item *ngIf="form.value.origin.account?.isActive">
           <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+            <ion-select-option *ngIf="form.value.type === TransactionType.TRANSFER" [value]="0">Deuda</ion-select-option>
             <ion-select-option *ngFor="let pocket of form.value.origin.account.pockets" [value]="pocket">{{ pocket.name }}</ion-select-option>
           </ion-select>
         </ion-item>
@@ -103,8 +104,15 @@
         <ion-button expand="block" color="medium" (click)="onClose.emit()">Cancelar</ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block" type="submit" [disabled]="form.invalid">Crear</ion-button>
+        <ion-button expand="block" type="submit" [disabled]="form.invalid || loading">Crear</ion-button>
       </ion-col>
     </ion-row>
   </ion-footer>
 </form>
+
+<ion-toast
+  message="No puede transferir a la misma cuenta, edite los montos desde la opción Cuentas"
+  [isOpen]="showToast"
+  [duration]="3000"
+  (didDismiss)="showToast = false">
+</ion-toast>

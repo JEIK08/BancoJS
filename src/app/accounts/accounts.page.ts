@@ -11,13 +11,18 @@ import { Account } from '../interfaces/account';
 export class AccountsPage {
 
   public accounts?: Account[];
+  public accordeonValues?: string[];
   public isFormOpen: boolean;
 
   constructor(private accountsService: AccountService) {
     this.isFormOpen = false;
     this.accountsService.getAccounts().subscribe(accounts => {
-      console.log('Update accounts list', accounts);
-      this.accounts = accounts;
+      this.accordeonValues = undefined;
+      this.accounts = undefined;
+      setTimeout(() => {
+        this.accounts = accounts;
+        this.accordeonValues = [];
+      });
     });
   }
 

@@ -9,9 +9,14 @@ export interface Transaction {
   type: TransactionType;
   value: number;
   date: Date;
-  account: string;
-  activeAccount?: string;
-  installments?: number;
-  destination?: string;
-  affectDebts?: boolean;
+  account: {
+    name: string;
+    isActive: boolean;
+    pocket?: string;
+  }
+  destination?: {
+    name: string;
+    isActive: boolean;
+    pocket?: string;
+  }
 }
