@@ -3,7 +3,7 @@ import { Subject, BehaviorSubject, from, debounceTime, concatMap } from 'rxjs';
 
 import { Collection, FirebaseService } from './firebase.service';
 
-import { Account } from '../interfaces/account';
+import { Account, Pocket } from '../interfaces/account';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +36,10 @@ export class AccountService {
       account.pockets.unshift({ name: 'Disponible', value: 0 });
     }
     return this.firebaseService.addDocument(Collection.Account, accountData);
+  }
+
+  updateAccountPockets(accountId: string, pockets: Pocket[]) {
+    return this.firebaseService.updateDocument<Account>(Collection.Account, accountId, { pockets });
   }
 
 }

@@ -32,7 +32,8 @@
       toggleIconSlot="start"
       [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
       [readonly]="!account.isActive"
-      [value]="account.id">
+      [value]="account.id"
+      (contextmenu)="selectAccount(account)">
       <ion-item slot="header">
         <ng-container
           *ngTemplateOutlet="account.isActive ? activeTemplate : pasiveTemplate; context: { $implicit: account }">
@@ -54,6 +55,12 @@
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
       <app-account-form (onClose)="isFormOpen = false"></app-account-form>
+    </ng-template>
+  </ion-modal>
+  
+  <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
+    <ng-template>
+      <app-pockets *ngIf="selectedAccount" [account]="selectedAccount" (onClose)="selectedAccount = undefined"></app-pockets>
     </ng-template>
   </ion-modal>
 </ion-content>

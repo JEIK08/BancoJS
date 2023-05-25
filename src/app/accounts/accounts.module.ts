@@ -5,6 +5,7 @@ import { AccountsPageRoutingModule } from './accounts-routing.module';
 
 import { AccountsPage } from './accounts.page';
 import { AccountFormComponent } from './account-form/account-form.component';
+import { PocketsComponent } from './pockets/pockets.component';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { AccountFormComponent } from './account-form/account-form.component';
   ],
   declarations: [
     AccountsPage,
-    AccountFormComponent
+    AccountFormComponent,
+    PocketsComponent
   ]
 })
 export class AccountsPageModule { }

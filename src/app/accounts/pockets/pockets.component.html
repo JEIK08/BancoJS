@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title slot="start">{{ account.name }}</ion-title>
+    <ion-text slot="end" class="ion-padding-end" class="ion-padding-end bold-value green">
+      {{ account.value | currency:'':'$ ':'1.2-2' }}
+    </ion-text>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-text>
+        <span>Deuda</span><br>
+        <small class="red">{{ debt | currency:'':'$ ':'1.2-2' }}</small>
+      </ion-text>
+      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="debt" (ngModelChange)="setTotal()"></ion-input>
+    </ion-item>
+    <ion-item *ngFor="let pocket of pockets">
+      <ion-text>
+        <span>{{ pocket.name }}</span><br>
+        <small class="green">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</small>
+      </ion-text>
+      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-text slot="start">Total</ion-text>
+      <ion-text slot="end" class="bold-value green">{{ total | currency:'':'$ ':'1.2-2' }}</ion-text>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" color="medium" (click)="onClose.emit()">Cancelar</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button expand="block" type="submit" (click)="save()">Aceptar</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

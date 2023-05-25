@@ -13,6 +13,7 @@ export class AccountsPage {
   public accounts?: Account[];
   public accordeonValues?: string[];
   public isFormOpen: boolean;
+  public selectedAccount?: Account;
 
   constructor(private accountsService: AccountService) {
     this.isFormOpen = false;
@@ -24,6 +25,11 @@ export class AccountsPage {
         this.accordeonValues = [];
       });
     });
+  }
+
+  selectAccount(account: Account) {
+    if (!account.isActive) return;
+    this.selectedAccount = account;
   }
 
 }
