@@ -18,7 +18,7 @@
     </ion-item>
     <ion-item>
       <ion-text>
-        <span>{{ account.pockets![0].name }}</span><br>
+        <span>{{ account.pockets[0].name }}</span><br>
         <small class="green">{{ available | currency:'':'$ ':'1.2-2' }}</small>
       </ion-text>
       <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="available" (ngModelChange)="setTotal()"></ion-input>

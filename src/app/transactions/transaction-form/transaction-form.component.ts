@@ -68,10 +68,10 @@ export class TransactionFormComponent implements OnDestroy {
       if (this.form.value.origin.pocket === 0) this.form.get('origin.pocket')!.setValue(this.form.value.origin.account.pockets[0]);
     });
     this.form.get('origin.account')!.valueChanges.pipe(takeUntil(this.onDestroySubject)).subscribe((newAccount: Account) => {
-      this.form.get('origin.pocket')!.setValue(newAccount.isActive ? newAccount.pockets![0] : null);
+      this.form.get('origin.pocket')!.setValue(newAccount.isActive ? newAccount.pockets[0] : null);
     });
     this.form.get('destination.account')!.valueChanges.pipe(takeUntil(this.onDestroySubject)).subscribe((newAccount: Account) => {
-      this.form.get('destination.pocket')!.setValue(newAccount?.isActive ? newAccount.pockets![0] : null);
+      this.form.get('destination.pocket')!.setValue(newAccount?.isActive ? newAccount.pockets[0] : null);
     });
 
     merge(this.form.get('type')!.valueChanges, this.form.get('origin.account')!.valueChanges)
@@ -127,7 +127,7 @@ export class TransactionFormComponent implements OnDestroy {
   }
 
   setDate(event: any) {
-    this.form.get('date')?.setValue(new Date(event.detail.value));
+    this.form.get('date')!.setValue(new Date(event.detail.value));
   }
 
   onSubmit() {

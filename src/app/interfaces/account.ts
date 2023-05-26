@@ -1,10 +1,10 @@
-export interface Account {
+export interface Account<IsActive extends boolean = true> {
   id: string;
   name: string;
   isActive: boolean;
   value: number;
-  debt?: number;
-  pockets?: Pocket[];
+  debt: IsActive extends true ? number : undefined;
+  pockets: IsActive extends true ? Pocket[] : undefined;
 }
 
 export interface Pocket {

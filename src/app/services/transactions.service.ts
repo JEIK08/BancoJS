@@ -16,7 +16,7 @@ export class TransactionsService {
     const type: TransactionType = data.type;
     const value: number = data.value;
     const origin: Account = data.origin.account;
-    const originPocket: Pocket | 0 = data.origin.pocket;
+    const originPocket: Pocket = data.origin.pocket;
     const destination: Account = data.destination.account;
     const destinationPocket: Pocket = data.destination.pocket;
 
@@ -39,27 +39,27 @@ export class TransactionsService {
 
     if (origin.isActive) {
       let accountValue: number = origin.value;
-      let accountDebt: number = origin.debt!;
+      let accountDebt: number = origin.debt;
       switch (type) {
         case TransactionType.IN:
-          transaction.account.pocket = (originPocket as Account).name;
-          (originPocket as Account).value += value;
+          transaction.account.pocket = originPocket.name;
+          originPocket.value += value;
           accountValue = accountValue + value;
           break;
 
         case TransactionType.OUT:
-          transaction.account.pocket = (originPocket as Account).name;
-          (originPocket as Account).value -= value;
+          transaction.account.pocket = originPocket.name;
+          originPocket.value -= value;
           accountValue = accountValue - value;
           break;
 
         case TransactionType.TRANSFER:
-          if (originPocket === 0) {
+          if (originPocket as any === 0) {
             transaction.account.pocket = 'Deuda';
             accountDebt = accountDebt - value;
           } else {
-            transaction.account.pocket = (originPocket as Account).name;
-            (originPocket as Account).value -= value;
+            transaction.account.pocket = originPocket.name;
+            originPocket.value -= value;
           }
           accountValue = accountValue - value;
           break;
@@ -99,7 +99,7 @@ export class TransactionsService {
         destinationPocket.value -= value;
         promises.push(
           this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-            debt: destination.debt! + value,
+            debt: destination.debt + value,
             pockets: destination.pockets
           })
         );

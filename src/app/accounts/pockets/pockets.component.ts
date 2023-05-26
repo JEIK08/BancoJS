@@ -28,14 +28,14 @@ export class PocketsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.available = this.account.pockets![0].value;
-    this.debt = this.account.debt!;
-    this.pockets = JSON.parse(JSON.stringify(this.account.pockets!.slice(1)));
+    this.available = this.account.pockets[0].value;
+    this.debt = this.account.debt;
+    this.pockets = JSON.parse(JSON.stringify(this.account.pockets.slice(1)));
     this.setTotal();
   }
 
   setTotal() {
-    this.total = this.pockets!.reduce((total, pocket) => total + pocket.value, this.debt + this.available);
+    this.total = this.pockets.reduce((total, pocket) => total + pocket.value, this.debt + this.available);
     console.log(this.pockets);
   }
 
@@ -53,7 +53,7 @@ export class PocketsComponent implements OnInit {
     this.accountService.updateAccountPockets(
       this.account.id,
       this.debt,
-      [{ name: this.account.pockets![0].name, value: this.available }, ...this.pockets]
+      [{ name: this.account.pockets[0].name, value: this.available }, ...this.pockets]
     ).then(() => this.onClose.emit());
   }
 
