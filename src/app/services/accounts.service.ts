@@ -38,8 +38,8 @@ export class AccountService {
     return this.firebaseService.addDocument(Collection.Account, accountData);
   }
 
-  updateAccountPockets(accountId: string, pockets: Pocket[]) {
-    return this.firebaseService.updateDocument<Account>(Collection.Account, accountId, { pockets });
+  updateAccountPockets(accountId: string, debt: number, pockets: Pocket[]) {
+    return this.firebaseService.updateDocument<Account>(Collection.Account, accountId, { debt, pockets });
   }
 
 }

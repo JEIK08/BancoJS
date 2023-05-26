@@ -57,23 +57,10 @@
       <app-account-form (onClose)="isFormOpen = false"></app-account-form>
     </ng-template>
   </ion-modal>
-  
+
   <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
     <ng-template>
       <app-pockets *ngIf="selectedAccount" [account]="selectedAccount" (onClose)="selectedAccount = undefined"></app-pockets>
     </ng-template>
   </ion-modal>
 </ion-content>
-
-<ion-footer>
-  <ion-accordion-group>
-    <ion-accordion toggleIconSlot="start">
-      <ion-item slot="header" class="lvl-1 hide-arrow">
-        <ion-label>Total</ion-label>
-        <ion-text class="green">
-          <span>$ 5,250,413.54</span>
-        </ion-text>
-      </ion-item>
-    </ion-accordion>
-  </ion-accordion-group>
-</ion-footer>

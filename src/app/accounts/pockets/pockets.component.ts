@@ -16,25 +16,26 @@ export class PocketsComponent implements OnInit {
   @Output('onClose') public onClose: EventEmitter<void>;
 
   public pockets!: Pocket[];
+  public available!: number;
   public debt!: number;
-  public total: number;
+  public total!: number;
 
   constructor(
     private accountService: AccountService,
     private toastController: ToastController
   ) {
     this.onClose = new EventEmitter();
-    this.total = 0;
   }
 
   ngOnInit() {
+    this.available = this.account.pockets![0].value;
     this.debt = this.account.debt!;
-    this.pockets = JSON.parse(JSON.stringify(this.account.pockets));
+    this.pockets = JSON.parse(JSON.stringify(this.account.pockets!.slice(1)));
     this.setTotal();
   }
 
   setTotal() {
-    this.total = this.pockets!.reduce((total, pocket) => total + pocket.value, this.debt);
+    this.total = this.pockets!.reduce((total, pocket) => total + pocket.value, this.debt + this.available);
     console.log(this.pockets);
   }
 
@@ -46,7 +47,14 @@ export class PocketsComponent implements OnInit {
       }).then(toast => toast.present());
       return;
     }
-    this.accountService.updateAccountPockets(this.account.id, this.pockets).then(() => this.onClose.emit());
+    if (this.account.isActive) {
+      this.account.debt;
+    }
+    this.accountService.updateAccountPockets(
+      this.account.id,
+      this.debt,
+      [{ name: this.account.pockets![0].name, value: this.available }, ...this.pockets]
+    ).then(() => this.onClose.emit());
   }
 
 }

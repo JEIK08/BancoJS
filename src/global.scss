@@ -26,11 +26,11 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 .green {
-  color: var(--ion-color-success);
+  color: var(--ion-color-success) !important;
 }
 
 .red {
-  color: var(--ion-color-danger);
+  color: var(--ion-color-danger) !important;
 }
 
 .bold-value {
