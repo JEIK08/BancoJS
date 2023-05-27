@@ -5,6 +5,28 @@
 </ion-header>
 
 <ion-content>
+  <ion-list>
+    <ion-item *ngFor="let t of transactions">
+      <ion-label>
+        <ion-text>{{ t.description }}</ion-text>
+        <p>
+          {{ t.account.name }}
+          <ng-container *ngIf="t.account.pocket">({{ t.account.pocket }})</ng-container>
+          <ng-container *ngIf="t.type === TransactionType.TRANSFER && t.destination">
+            <br>
+            {{ t.destination.name }}
+            <ng-container *ngIf="t.destination.pocket">({{ t.destination.pocket }})</ng-container>
+          </ng-container>
+        </p>
+      </ion-label>
+      <ng-container [ngSwitch]="t.type">
+        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.IN" color="success">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.OUT" color="danger">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.TRANSFER" color="primary">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+      </ng-container>
+    </ion-item>
+  </ion-list>
+
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
       <app-transaction-form (onClose)="isFormOpen = false"></app-transaction-form>

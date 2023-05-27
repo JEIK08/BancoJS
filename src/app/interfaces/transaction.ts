@@ -5,6 +5,7 @@ export enum TransactionType {
 }
 
 export interface Transaction {
+  id: string;
   description: string;
   type: TransactionType;
   value: number;

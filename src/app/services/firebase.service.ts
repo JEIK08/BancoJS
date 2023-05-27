@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Firestore, doc, getDoc, getDocs, query, collection, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, getDocs, query, collection, onSnapshot, addDoc, updateDoc, Timestamp, QueryConstraint } from '@angular/fire/firestore';
 
 export enum Collection {
   Account = 'Account',
@@ -26,13 +26,17 @@ export class FirebaseService {
     onSnapshot(this.getCollectionRef(collectionName), snapshot => onChange(snapshot));
   }
 
-  getDocuments<T>(collectionName: Collection/* , mapFunction?: (doc: T) => void */): Promise<T[]> {
-    return getDocs(query(this.getCollectionRef(collectionName))).then(({ docs }) => new Promise(resolve => {
+  getDocuments<T>(collectionName: Collection, data: {
+    queryConstrains?: QueryConstraint[],
+    mapFunction?: (doc: T) => void
+  } = {}): Promise<T[]> {
+    const { queryConstrains, mapFunction } = data;
+    return getDocs(query(this.getCollectionRef(collectionName), ...queryConstrains ?? [])).then(({ docs }) => new Promise(resolve => {
       resolve(
         docs.map(docRef => {
           const doc: any = docRef.data();
           doc.id = docRef.id;
-          // mapFunction?.(doc);
+          mapFunction?.(doc);
           return doc;
         })
       );
@@ -53,6 +57,14 @@ export class FirebaseService {
 
   updateDocument<T>(collectionName: Collection, id: string, data: { [key in keyof T]?: T[key] }) {
     return updateDoc(this.getDocumentRef(collectionName, id) as any, data as any);
+  }
+
+  mapDate(date: any) {
+    return new Date(date.seconds * 1000);
+  }
+
+  getDate(date: Date) {
+    return Timestamp.fromDate(date)
   }
 
 }

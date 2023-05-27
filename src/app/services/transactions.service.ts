@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { QueryConstraint, limit, orderBy, startAfter } from '@angular/fire/firestore';
+
 import { Collection, FirebaseService } from './firebase.service';
 
 import { Account, Pocket } from '../interfaces/account';
@@ -24,12 +26,12 @@ export class TransactionsService {
       description: data.description,
       type,
       value,
-      date: data.date,
+      date: this.firebaseService.getDate(data.date) as any,
       account: {
         name: origin.name,
         isActive: origin.isActive
       }
-    };
+    } as Transaction;
     if (destination) {
       transaction.destination = { name: destination.name, isActive: destination.isActive };
       if (destination.isActive) transaction.destination.pocket = destinationPocket.name;
@@ -125,6 +127,17 @@ export class TransactionsService {
 
     promises.push(this.firebaseService.addDocument(Collection.Transaction, transaction));
     return Promise.all(promises);
+  }
+
+  getTransactions(page: number, transactions?: Transaction[]) {
+    const pageSize = 15;
+    const queryConstrains: QueryConstraint[] = [orderBy('date', 'desc')];
+    if (page > 1) queryConstrains.push(startAfter(transactions![transactions!?.length - 1].date));
+    queryConstrains.push(limit(pageSize));
+    return this.firebaseService.getDocuments<Transaction>(Collection.Transaction, {
+      queryConstrains,
+      mapFunction: transaction => transaction.date = this.firebaseService.mapDate(transaction.date)
+    });
   }
 
 }
