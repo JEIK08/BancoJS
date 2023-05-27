@@ -14,7 +14,11 @@ export class TransactionsService {
 
   constructor(private firebaseService: FirebaseService) { }
 
-  async createTransaction(data: any) {
+  listenTransactions(action: () => void) {
+    this.firebaseService.listenCollection(Collection.Transaction, action);
+  }
+
+  createTransaction(data: any) {
     const type: TransactionType = data.type;
     const value: number = data.value;
     const origin: Account = data.origin.account;

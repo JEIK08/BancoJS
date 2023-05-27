@@ -1,6 +1,19 @@
 import { Injectable } from '@angular/core';
 
-import { Firestore, doc, getDoc, getDocs, query, collection, onSnapshot, addDoc, updateDoc, Timestamp, QueryConstraint } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  collection,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  Timestamp,
+  QueryConstraint,
+  QuerySnapshot
+} from '@angular/fire/firestore';
 
 export enum Collection {
   Account = 'Account',
@@ -22,7 +35,7 @@ export class FirebaseService {
     return doc(this.firestore, collectionName, id);
   }
 
-  listenCollection(collectionName: Collection, onChange: (data?: any) => void) {
+  listenCollection(collectionName: Collection, onChange: (data?: QuerySnapshot<any>) => void) {
     onSnapshot(this.getCollectionRef(collectionName), snapshot => onChange(snapshot));
   }
 

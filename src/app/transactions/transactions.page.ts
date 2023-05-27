@@ -17,10 +17,15 @@ export class TransactionsPage {
 
   constructor(private transactionsService: TransactionsService) {
     this.transactions = [];
-    this.isFormOpen = false;
     this.page = 0;
+    this.isFormOpen = false;
     this.TransactionType = TransactionType;
     this.getTransactions();
+    this.transactionsService.listenTransactions(() => {
+      this.transactions = [];
+      this.page = 0;
+      this.getTransactions();
+    })
   }
 
   getTransactions() {
