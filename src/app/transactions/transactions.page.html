@@ -7,25 +7,40 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let t of transactions">
-      <ion-label>
-        <ion-text>{{ t.description }}</ion-text>
-        <p>
-          {{ t.account.name }}
-          <ng-container *ngIf="t.account.pocket">({{ t.account.pocket }})</ng-container>
-          <ng-container *ngIf="t.type === TransactionType.TRANSFER && t.destination">
-            <br>
-            {{ t.destination.name }}
-            <ng-container *ngIf="t.destination.pocket">({{ t.destination.pocket }})</ng-container>
-          </ng-container>
-        </p>
-      </ion-label>
-      <ng-container [ngSwitch]="t.type">
-        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.IN" color="success">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
-        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.OUT" color="danger">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
-        <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.TRANSFER" color="primary">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+      <ng-container *ngIf="t.isDate; else transactionTemplate">
+        <ion-item-divider color="medium">
+          <ion-label class="bold-value">{{ t.date }}</ion-label>
+        </ion-item-divider>
       </ng-container>
+      <ng-template #transactionTemplate>
+        <ng-container *ngTemplateOutlet="transactionContent; context: { $implicit: t }"></ng-container>
+      </ng-template>
     </ion-item>
   </ion-list>
+
+  <ng-template #transactionContent let-t>
+    <ion-label>
+      <ion-text>{{ t.description }}</ion-text>
+      <p>
+        {{ t.account.name }}
+        <ng-container *ngIf="t.account.pocket">({{ t.account.pocket }})</ng-container>
+        <ng-container *ngIf="t.type === TransactionType.TRANSFER && t.destination">
+          <br>
+          {{ t.destination.name }}
+          <ng-container *ngIf="t.destination.pocket">({{ t.destination.pocket }})</ng-container>
+        </ng-container>
+      </p>
+    </ion-label>
+    <ng-container [ngSwitch]="t.type">
+      <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.IN" color="success">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+      <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.OUT" color="danger">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+      <ion-label class="bold-value" slot="end" *ngSwitchCase="TransactionType.TRANSFER" color="primary">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
+    </ng-container>
+  </ng-template>
+
+  <ion-infinite-scroll (ionInfinite)="getTransactions($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>

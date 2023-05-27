@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { InfiniteScrollCustomEvent } from '@ionic/angular';
 
 import { TransactionsService } from '../services/transactions.service';
 import { Transaction, TransactionType } from '../interfaces/transaction';
@@ -10,28 +11,41 @@ import { Transaction, TransactionType } from '../interfaces/transaction';
 })
 export class TransactionsPage {
 
-  public transactions: Transaction[];
+  public transactions!: Transaction[] & { isDate: boolean, date: string }[];
   public isFormOpen: boolean;
-  public page: number;
+  public page!: number;
   public TransactionType: typeof TransactionType;
+  public completePages?: boolean;
 
   constructor(private transactionsService: TransactionsService) {
-    this.transactions = [];
-    this.page = 0;
     this.isFormOpen = false;
     this.TransactionType = TransactionType;
-    this.getTransactions();
     this.transactionsService.listenTransactions(() => {
       this.transactions = [];
       this.page = 0;
+      this.completePages = false;
       this.getTransactions();
     })
   }
 
-  getTransactions() {
+  getTransactions(scrollEvent?: any) {
+    if (this.completePages) {
+      (scrollEvent as InfiniteScrollCustomEvent)?.target.complete();
+      return;
+    }
     this.page++;
     this.transactionsService.getTransactions(this.page, this.transactions).then(transactions => {
-      this.transactions.push(...transactions);
+      let lastDate: string = this.transactions[this.transactions.length - 1]?.date.toLocaleDateString() ?? '';
+      transactions.forEach((transaction: Transaction) => {
+        const currentDate: string = transaction.date.toLocaleDateString();
+        if (currentDate != lastDate) {
+          lastDate = currentDate;
+          this.transactions.push({ isDate: true, date: currentDate } as any);
+        }
+        this.transactions.push(transaction);
+      });
+      this.completePages = transactions.length == 0;
+      (scrollEvent as InfiniteScrollCustomEvent)?.target.complete();
     });
   }
 

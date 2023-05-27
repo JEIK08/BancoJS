@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'transactions',
+    redirectTo: 'accounts',
     pathMatch: 'full'
   }
 ];
