@@ -1,5 +1,5 @@
 {
-	"appId": "io.ionic.starter",
+	"appId": "io.ionic.BancoJS",
 	"appName": "BancoJS",
 	"webDir": "www",
 	"server": {
