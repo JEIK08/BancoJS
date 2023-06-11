@@ -62,35 +62,35 @@ export class TransactionsService {
         case TransactionType.TRANSFER:
           if (originPocket as any === 0) {
             transaction.account.pocket = 'Deuda';
-            accountDebt = accountDebt - value;
+            accountDebt -= value;
           } else {
             transaction.account.pocket = originPocket.name;
             originPocket.value -= value;
           }
-          accountValue = accountValue - value;
+          accountValue -= value;
           break;
-
       }
+      originPocket.value = Math.round(originPocket.value * 100) / 100
       promises.push(
         this.firebaseService.updateDocument<Account>(Collection.Account, origin.id, {
-          value: accountValue,
+          value: Math.round(accountValue * 100) / 100,
           pockets: origin.pockets,
-          debt: accountDebt
+          debt: Math.round(accountDebt * 100) / 100
         })
       );
       if (type == TransactionType.TRANSFER) {
         if (destination.isActive) {
-          destinationPocket.value += value;
+          destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
           promises.push(
             this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: destination.value + value,
+              value: Math.round((destination.value + value) * 100) / 100,
               pockets: destination.pockets
             })
           );
         } else {
           promises.push(
             this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: destination.value - value
+              value: Math.round((destination.value - value) * 100) / 100
             })
           );
         }
@@ -98,31 +98,31 @@ export class TransactionsService {
     } else {
       promises.push(
         this.firebaseService.updateDocument<Account>(Collection.Account, origin.id, {
-          value: origin.value + (type == TransactionType.IN ? -value : value)
+          value: Math.round((origin.value + (type == TransactionType.IN ? -value : value)) * 100) / 100
         })
       );
       if (type == TransactionType.OUT) {
-        destinationPocket.value -= value;
+        destinationPocket.value = Math.round((destinationPocket.value - value) * 100) / 100;
         promises.push(
           this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-            debt: destination.debt + value,
+            debt: Math.round((destination.debt + value) * 100) / 100,
             pockets: destination.pockets
           })
         );
       }
       if (type == TransactionType.TRANSFER) {
         if (destination.isActive) {
-          destinationPocket.value += value;
+          destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
           promises.push(
             this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: destination.value + value,
+              value: Math.round((destination.value + value) * 100) / 100,
               pockets: destination.pockets
             })
           );
         } else {
           promises.push(
             this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: destination.value - value
+              value: Math.round((destination.value - value) * 100) / 100
             })
           );
         }

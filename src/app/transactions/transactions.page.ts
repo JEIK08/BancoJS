@@ -24,7 +24,7 @@ export class TransactionsPage {
       this.page = 0;
       this.completePages = false;
       this.getTransactions();
-    })
+    });
   }
 
   getTransactions(scrollEvent?: any) {
