@@ -12,13 +12,12 @@ import { Transaction, TransactionType } from '../interfaces/transaction';
 export class TransactionsPage {
 
   public transactions!: Transaction[] & { isDate: boolean, date: string }[];
-  public isFormOpen: boolean;
   public page!: number;
   public TransactionType: typeof TransactionType;
-  public completePages?: boolean;
+
+  private completePages?: boolean;
 
   constructor(private transactionsService: TransactionsService) {
-    this.isFormOpen = false;
     this.TransactionType = TransactionType;
     this.transactionsService.listenTransactions(() => {
       this.transactions = [];

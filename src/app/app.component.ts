@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() { }
+
+  public isFormOpen: boolean;
+
+  constructor() {
+    this.isFormOpen = false;
+  }
 }

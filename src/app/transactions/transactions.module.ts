@@ -2,11 +2,9 @@ import { NgModule } from '@angular/core';
 
 import { TransactionsPageRoutingModule } from './transactions-routing.module';
 
-import { SharedModule } from '../shared/shared/shared.module';
-import { TransactionsService } from '../services/transactions.service';
+import { SharedModule } from '../shared/shared.module';
 
 import { TransactionsPage } from './transactions.page';
-import { TransactionFormComponent } from './transaction-form/transaction-form.component';
 
 @NgModule({
   imports: [
@@ -14,11 +12,7 @@ import { TransactionFormComponent } from './transaction-form/transaction-form.co
     TransactionsPageRoutingModule
   ],
   declarations: [
-    TransactionsPage,
-    TransactionFormComponent
-  ],
-  providers: [
-    TransactionsService
+    TransactionsPage
   ]
 })
 export class TransactionsPageModule { }
