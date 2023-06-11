@@ -25,7 +25,7 @@
     </ion-item>
     <ion-item *ngFor="let pocket of pockets; index as i">
       <ion-input class="pocket-input" [helperText]="pocket.value | currency:'':'$ ':'1.2-2'" [(ngModel)]="pocket.name"></ion-input>
-      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()"></ion-input>
+      <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()"></ion-input>
       <ion-icon
         slot="end"
         name="close-circle-outline"
