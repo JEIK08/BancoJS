@@ -70,7 +70,7 @@ export class TransactionsService {
           accountValue -= value;
           break;
       }
-      originPocket.value = Math.round(originPocket.value * 100) / 100
+      if (originPocket as any != 0) originPocket.value = Math.round(originPocket.value * 100) / 100;
       promises.push(
         this.firebaseService.updateDocument<Account>(Collection.Account, origin.id, {
           value: Math.round(accountValue * 100) / 100,
