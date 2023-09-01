@@ -41,6 +41,7 @@ export class PocketsComponent implements OnInit {
 
   setTotal() {
     this.total = this.pockets.reduce((total, pocket) => total + pocket.value, this.debt + this.available);
+    this.total = Math.round(this.total * 100) / 100;
   }
 
   save() {
