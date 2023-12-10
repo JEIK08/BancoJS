@@ -12,8 +12,7 @@ import {
   updateDoc,
   Timestamp,
   QueryConstraint,
-  QuerySnapshot,
-  QueryDocumentSnapshot
+  QuerySnapshot
 } from '@angular/fire/firestore';
 
 export enum Collection {
