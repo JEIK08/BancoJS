@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
@@ -28,7 +28,11 @@ import { TransactionFormComponent } from './transaction-form/transaction-form.co
     AppRoutingModule,
     SharedModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideFirestore(() => getFirestore()),
+    provideFirestore(() => {
+      const firestore = getFirestore();
+      if (!environment.production) connectFirestoreEmulator(firestore, 'localhost', 8080);
+      return firestore;
+    }),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
