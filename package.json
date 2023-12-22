@@ -10,10 +10,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "firebase:blank": "firebase emulators:start --only firestore",
-    "firebase": "firebase emulators:start --only firestore --import firebase-data",
+    "firebase:blank": "firebase emulators:start --only firestore,auth",
+    "firebase": "firebase emulators:start --only firestore,auth --import firebase-data",
     "firebase:save": "firebase emulators:export firebase-data",
-    "dev": "concurrently \"ionic serve\" \"npm run firebase\""
+    "dev": "concurrently \"ionic serve --no-open\" \"npm run firebase\"",
+    "dev:open": "concurrently \"ionic serve\" \"npm run firebase\""
   },
   "private": true,
   "dependencies": {
@@ -33,7 +34,7 @@
     "@capacitor/status-bar": "5.0.6",
     "@ionic/angular": "^7.5.0",
     "firebase": "^10.7.1",
-    "ionicons": "^7.2.1",
+    "ionicons": "^7.2.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"

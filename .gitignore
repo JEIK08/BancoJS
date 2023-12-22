@@ -69,3 +69,5 @@ Thumbs.db
 
 # Android Project
 /android
+
+/firebase-data
