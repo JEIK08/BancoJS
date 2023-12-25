@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { IonButton, IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalone';
+
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -19,14 +22,16 @@ import { IonButton, IonContent, IonInput, IonItem, IonList } from '@ionic/angula
 })
 export default class AuthComponent {
 
-  public form: FormGroup
+  public form: FormGroup;
 
   constructor(
-    private formBuilder: FormBuilder
+    private authService: AuthService,
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
     this.form = this.formBuilder.group({
-      email: [null, [Validators.required, Validators.email]],
-      password: [null, Validators.required]
+      email: ['jjsuarez8@hotmail.es', [Validators.required, Validators.email]],
+      password: ['123456', Validators.required]
     });
   }
 
@@ -35,6 +40,10 @@ export default class AuthComponent {
       this.form.markAllAsTouched();
       return;
     }
+
+    this.authService.logIn(this.form.value.email, this.form.value.password).subscribe(() => {
+      this.router.navigate(['']);
+    });
   }
 
 }
