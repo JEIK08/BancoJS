@@ -1,16 +1,6 @@
 import { Component } from '@angular/core';
 
-import {
-  IonApp,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonLabel,
-  IonModal,
-  IonTabBar,
-  IonTabButton,
-  IonTabs
-} from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-root',
@@ -18,22 +8,7 @@ import {
   standalone: true,
   imports: [
     IonApp,
-    IonFab,
-    IonFabButton,
-    IonIcon,
-    IonLabel,
-    IonModal,
-    IonTabBar,
-    IonTabButton,
-    IonTabs
+    IonRouterOutlet
   ]
 })
-export class AppComponent {
-
-  public isFormOpen: boolean;
-
-  constructor() {
-    this.isFormOpen = false;
-  }
-
-}
+export class AppComponent { }

@@ -1,28 +1,3 @@
 <ion-app>
-  <ion-tabs>
-    <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="accounts">
-        <ion-icon name="cash-outline"></ion-icon>
-        <ion-label>Cuentas</ion-label>
-      </ion-tab-button>
-      <ion-tab-button tab="transactions">
-        <ion-icon name="list-outline"></ion-icon>
-        <ion-label>Transacciones</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>
+  <ion-router-outlet />
 </ion-app>
-
-<ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
-  <ng-template>
-    <!-- <app-transaction-form (onClose)="isFormOpen = false"></app-transaction-form> -->
-  </ng-template>
-</ion-modal>
-
-@if (!isFormOpen) {
-  <ion-fab vertical="bottom" horizontal="end" style="bottom: 70px" (click)="isFormOpen = true">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-}
