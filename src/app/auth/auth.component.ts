@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-auth',
@@ -8,6 +9,8 @@ import { IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalon
   styleUrls: ['./auth.component.scss'],
   standalone: true,
   imports: [
+    ReactiveFormsModule,
+    IonButton,
     IonContent,
     IonInput,
     IonItem,
@@ -16,6 +19,22 @@ import { IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalon
 })
 export default class AuthComponent {
 
-  constructor() { }
+  public form: FormGroup
+
+  constructor(
+    private formBuilder: FormBuilder
+  ) {
+    this.form = this.formBuilder.group({
+      email: [null, [Validators.required, Validators.email]],
+      password: [null, Validators.required]
+    });
+  }
+
+  onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+  }
 
 }
