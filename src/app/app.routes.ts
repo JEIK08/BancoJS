@@ -7,7 +7,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./home/home.component')
+    loadChildren: () => import('./home/home.routes')
   },
   {
     path: '**',
