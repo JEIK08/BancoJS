@@ -4,8 +4,8 @@ import { QueryConstraint, limit, orderBy, startAfter } from '@angular/fire/fires
 
 import { Collection, FirebaseService } from './firebase.service';
 
-import { Account, Pocket } from '../interfaces/account';
-import { TransactionType, Transaction } from '../interfaces/transaction';
+import { Account, Pocket } from '../../interfaces/account';
+import { TransactionType, Transaction } from '../../interfaces/transaction';
 
 @Injectable({
   providedIn: 'root'

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { Auth, user, signInWithEmailAndPassword, authState, idToken } from '@angular/fire/auth';
+
 import {
   Firestore,
   doc,
@@ -25,7 +27,12 @@ export enum Collection {
 })
 export class FirebaseService {
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore, private auth: Auth) {
+    user(this.auth).subscribe(data => console.log('user', data));
+    authState(this.auth).subscribe(data => console.log('authState', data));
+    idToken(this.auth).subscribe(data => console.log('idToken', data));
+    signInWithEmailAndPassword(this.auth, 'jjsuarez8@hotmail.es', '123456').then(data => console.log('login', data));
+  }
 
   getCollectionRef(collectionName: Collection) {
     return collection(this.firestore, collectionName);
@@ -68,7 +75,7 @@ export class FirebaseService {
     return addDoc(this.getCollectionRef(collectionName), data);
   }
 
-  updateDocument<T>(collectionName: Collection, id: string, data: { [key in keyof T]?: T[key] }) {
+  updateDocument<T>(collectionName: Collection, id: string, data: Partial<T>) {
     return updateDoc(this.getDocumentRef(collectionName, id) as any, data as any);
   }
 

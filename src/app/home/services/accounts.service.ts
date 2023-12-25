@@ -3,7 +3,7 @@ import { Subject, BehaviorSubject, from, debounceTime, concatMap } from 'rxjs';
 
 import { Collection, FirebaseService } from './firebase.service';
 
-import { Account, Pocket } from '../interfaces/account';
+import { Account, Pocket } from '../../interfaces/account';
 
 @Injectable({
   providedIn: 'root'
