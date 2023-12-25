@@ -15,12 +15,14 @@
 
 <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
   <ng-template>
-    <app-transaction-form (onClose)="isFormOpen = false"></app-transaction-form>
+    <!-- <app-transaction-form (onClose)="isFormOpen = false"></app-transaction-form> -->
   </ng-template>
 </ion-modal>
 
-<ion-fab *ngIf="!isFormOpen" vertical="bottom" horizontal="end" style="bottom: 70px" (click)="isFormOpen = true">
-  <ion-fab-button>
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
+@if (!isFormOpen) {
+  <ion-fab vertical="bottom" horizontal="end" style="bottom: 70px" (click)="isFormOpen = true">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}
