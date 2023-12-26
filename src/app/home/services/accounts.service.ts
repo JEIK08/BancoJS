@@ -5,15 +5,14 @@ import { Collection, FirebaseService } from './firebase.service';
 
 import { Account, Pocket } from '../../interfaces/account';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AccountService {
 
   private accountsSubject: Subject<void>;
   private accountsBehavior: BehaviorSubject<Account[]>;
 
   constructor(private firebaseService: FirebaseService) {
+    console.log('Create Account instance');
     this.accountsSubject = new Subject();
     this.accountsBehavior = new BehaviorSubject<Account[]>([]);
     this.firebaseService.listenCollection(Collection.Account, () => this.accountsSubject.next());

@@ -3,15 +3,17 @@ import { from, map } from 'rxjs';
 
 import { Auth, User, signInWithEmailAndPassword, user } from '@angular/fire/auth';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
 
   private user: User | null = null;
 
   constructor(private auth: Auth) {
-    user(auth).subscribe((user: User | null) => this.user = user);
+    console.log('Create AuthService Instance');
+    user(auth).subscribe((user: User | null) => {
+      console.log('User status', user);
+      this.user = user;
+    });
   }
 
   logIn(email: string, password: string) {

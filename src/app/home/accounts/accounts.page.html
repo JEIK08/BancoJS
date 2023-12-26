@@ -1,7 +1,4 @@
-<ion-content>
-  <div>Accounts</div>
-</ion-content>
-<!-- <ion-header>
+<ion-header>
   <ion-toolbar>
     <ion-title>Cuentas</ion-title>
     <ion-buttons slot="end">
@@ -16,11 +13,15 @@
   <ng-template #activeTemplate let-account>
     <ion-label>
       <span>{{ account.name }}</span>
-      <p class="green" *ngIf="account.debt">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
+      @if (account.debt) {
+        <p class="green">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
+      }
     </ion-label>
     <ion-text class="ion-text-end">
       <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
-      <small *ngIf="account.debt" class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+      @if (account.debt) {
+        <small class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+      }
     </ion-text>
   </ng-template>
 
@@ -29,41 +30,52 @@
     <ion-text class="bold-value red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
   </ng-template>
 
-  <ion-accordion-group multiple *ngIf="accounts" [value]="accordeonValues">
-    <ion-accordion
-      *ngFor="let account of accounts"
-      toggleIconSlot="start"
-      [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
-      [readonly]="!account.isActive"
-      [value]="account.id"
-      (contextmenu)="selectAccount(account)">
-      <ion-item slot="header">
-        <ng-container
-          *ngTemplateOutlet="account.isActive ? activeTemplate : pasiveTemplate; context: { $implicit: account }">
-        </ng-container>
-      </ion-item>
-      <ion-list slot="content" *ngIf="account.isActive">
-        <ion-item *ngIf="account.debt">
-          <ion-label>Deuda</ion-label>
-          <ion-text class="red">{{ account.debt | currency:'':'$ ':'1.2-2' }}</ion-text>
-        </ion-item>
-        <ion-item *ngFor="let pocket of account.pockets">
-          <ion-label>{{ pocket.name }}</ion-label>
-          <ion-text class="green">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</ion-text>
-        </ion-item>
-      </ion-list>
-    </ion-accordion>
-  </ion-accordion-group>
+  @if (accounts) {
+    <ion-accordion-group multiple [value]="accordeonValues">
+      @for (account of accounts; track account.id) {
+        <ion-accordion
+          toggleIconSlot="start"
+          [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
+          [readonly]="!account.isActive"
+          [value]="account.id"
+          (contextmenu)="selectAccount(account)"
+        >
+          <ion-item slot="header">
+            <ng-container
+              *ngTemplateOutlet="account.isActive ? activeTemplate : pasiveTemplate; context: { $implicit: account }">
+            </ng-container>
+          </ion-item>
+
+          @if (account.isActive) {
+            <ion-list slot="content">
+              @if (account.debt) {
+                <ion-item>
+                  <ion-label>Deuda</ion-label>
+                  <ion-text class="red">{{ account.debt | currency:'':'$ ':'1.2-2' }}</ion-text>
+                </ion-item>
+              }
+              @for (pocket of account.pockets; track pocket.name) {
+                <ion-item>
+                  <ion-label>{{ pocket.name }}</ion-label>
+                  <ion-text class="green">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+                </ion-item>
+              }
+            </ion-list>
+          }
+        </ion-accordion>
+      }
+    </ion-accordion-group>
+  }
 
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
-      <app-account-form (onClose)="isFormOpen = false"></app-account-form>
+      <!-- <app-account-form (onClose)="isFormOpen = false"></app-account-form> -->
     </ng-template>
   </ion-modal>
 
   <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
     <ng-template>
-      <app-pockets *ngIf="selectedAccount" [account]="selectedAccount" (onClose)="selectedAccount = undefined"></app-pockets>
+      <!-- <app-pockets *ngIf="selectedAccount" [account]="selectedAccount" (onClose)="selectedAccount = undefined"></app-pockets> -->
     </ng-template>
   </ion-modal>
-</ion-content> -->
+</ion-content>

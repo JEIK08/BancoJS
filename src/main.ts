@@ -7,6 +7,7 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { AuthService } from './app/services/auth.service';
 
@@ -29,6 +30,11 @@ bootstrapApplication(AppComponent, {
         const auth = getAuth();
         if (!environment.production) connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
         return auth;
+      }),
+      provideFirestore(() => {
+        const firestore = getFirestore();
+        if (!environment.production) connectFirestoreEmulator(firestore, 'localhost', 8080);
+        return firestore;
       }),
     ])
   ],
