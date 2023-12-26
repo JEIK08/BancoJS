@@ -11,6 +11,7 @@ import { IMPORTS } from './accounts.utils';
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.page.html',
+  styleUrl: './accounts.page.scss',
   standalone: true,
   imports: IMPORTS
 })
@@ -25,12 +26,8 @@ export default class AccountsPage {
     addIcons({ addCircleSharp, chevronDownOutline });
     this.isFormOpen = false;
     this.accountsService.getAccounts().subscribe(accounts => {
-      this.accordeonValues = undefined;
-      this.accounts = undefined;
-      setTimeout(() => {
-        this.accounts = accounts;
-        this.accordeonValues = [];
-      });
+      this.accordeonValues = [];
+      this.accounts = accounts;
     });
   }
 

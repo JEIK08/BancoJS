@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable, from, map, finalize, Subject } from 'rxjs';
 
 import {
   Firestore,
@@ -12,8 +13,9 @@ import {
   updateDoc,
   Timestamp,
   QueryConstraint,
-  QuerySnapshot
 } from '@angular/fire/firestore';
+
+import { AuthService } from 'src/app/services/auth.service';
 
 export enum Collection {
   Account = 'Account',
@@ -23,37 +25,63 @@ export enum Collection {
 @Injectable()
 export class FirebaseService {
 
-  constructor(private firestore: Firestore) {
-    console.log('Create FirebaseService Instance');
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService
+  ) { }
+
+  private getCollectionPath(collectionName: Collection) {
+    return `/Databases/${ this.authService.getDatabaseName }/${ collectionName }`;
   }
 
-  getCollectionRef(collectionName: Collection) {
-    return collection(this.firestore, collectionName);
+  private getCollectionRef(collectionName: Collection) {
+    return collection(this.firestore, this.getCollectionPath(collectionName));
   }
 
-  getDocumentRef(collectionName: Collection, id: string) {
-    return doc(this.firestore, collectionName, id);
+  private getDocumentRef(collectionName: Collection, id: string) {
+    return doc(this.firestore, this.getCollectionPath(collectionName), id);
   }
 
-  listenCollection(collectionName: Collection, onChange: (data?: QuerySnapshot<any>) => void) {
-    onSnapshot(this.getCollectionRef(collectionName), snapshot => onChange(snapshot));
+  listenCollection(collectionName: Collection) {
+    // return onSnapshot(this.getCollectionRef(collectionName), snapshot => onChange(snapshot));
+    const subject = new Subject();
+    const observable = subject.asObservable();
+    const unsubscriber = onSnapshot(
+      this.getCollectionRef(collectionName),
+      data => {
+        console.log('Next snapshot');
+        subject.next(data);
+      },
+      subject.error,
+    );
+    return observable.pipe(
+      finalize(() => {
+        console.log('Finalize observable');
+        subject.complete();
+        unsubscriber();
+      })
+    );
   }
 
   getDocuments<T>(collectionName: Collection, data: {
     queryConstrains?: QueryConstraint[],
     mapFunction?: (doc: T) => void
-  } = {}): Promise<T[]> {
+  } = {}): Observable<T[]> {
     const { queryConstrains, mapFunction } = data;
-    return getDocs(query(this.getCollectionRef(collectionName), ...queryConstrains ?? [])).then(({ docs }) => new Promise(resolve => {
-      resolve(
-        docs.map(docRef => {
+    return from(
+      getDocs(
+        query(this.getCollectionRef(collectionName), ...queryConstrains ?? [])
+      )
+    ).pipe(
+      map(({ docs }) => {
+        return docs.map(docRef => {
           const doc: any = docRef.data();
           doc.id = docRef.id;
           mapFunction?.(doc);
           return doc;
         })
-      );
-    }));
+      })
+    );
   }
 
   getDocument<T>(collectionName: Collection, id: string): Promise<T> {

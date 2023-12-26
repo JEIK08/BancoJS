@@ -41,8 +41,8 @@ export default class AuthComponent {
       return;
     }
 
-    this.authService.logIn(this.form.value.email, this.form.value.password).subscribe(() => {
-      this.router.navigate(['']);
+    this.authService.logIn(this.form.value.email, this.form.value.password).subscribe(loggedIn => {
+      if (loggedIn) this.router.navigate(['']);
     });
   }
 

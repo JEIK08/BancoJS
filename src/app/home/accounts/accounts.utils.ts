@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonList,
   IonModal,
+  IonSpinner,
   IonText,
   IonTitle,
   IonToolbar
@@ -31,7 +32,8 @@ export const IMPORTS = [
   IonLabel,
   IonList,
   IonModal,
+  IonSpinner,
   IonText,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 ]
