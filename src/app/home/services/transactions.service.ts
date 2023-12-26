@@ -7,9 +7,7 @@ import { Collection, FirebaseService } from './firebase.service';
 import { Account, Pocket } from '../../interfaces/account';
 import { TransactionType, Transaction } from '../../interfaces/transaction';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class TransactionsService {
 
   constructor(private firebaseService: FirebaseService) { }

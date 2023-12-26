@@ -2,8 +2,8 @@ import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, delay, merge, takeUntil } from 'rxjs';
 
-import { AccountService } from 'src/app/services/accounts.service';
-import { TransactionsService } from 'src/app/services/transactions.service';
+import { AccountService } from 'src/app/home/services/accounts.service';
+import { TransactionsService } from 'src/app/home/services/transactions.service';
 import { Account } from 'src/app/interfaces/account';
 import { TransactionType } from 'src/app/interfaces/transaction';
 

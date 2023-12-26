@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AccountService } from 'src/app/services/accounts.service';
+import { AccountService } from 'src/app/home/services/accounts.service';
 
 @Component({
   selector: 'app-account-form',

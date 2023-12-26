@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ToastController } from '@ionic/angular';
 
-import { AccountService } from 'src/app/services/accounts.service';
+import { AccountService } from 'src/app/home/services/accounts.service';
 import { Account, Pocket } from 'src/app/interfaces/account';
 
 @Component({
