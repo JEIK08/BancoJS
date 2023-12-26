@@ -10,7 +10,6 @@ import { IMPORTS, addComponentIcons } from './accounts.utils';
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.page.html',
-  styleUrl: './accounts.page.scss',
   standalone: true,
   imports: IMPORTS
 })

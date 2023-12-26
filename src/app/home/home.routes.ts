@@ -23,6 +23,10 @@ export default [
         component: AccountsPage
       },
       {
+        path: 'transactions',
+        loadComponent: () => import('./transactions/transactions.page'),
+      },
+      {
         path: '**',
         redirectTo: 'accounts',
         pathMatch: 'full'

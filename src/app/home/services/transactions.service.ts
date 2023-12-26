@@ -132,10 +132,10 @@ export class TransactionsService {
     return forkJoin(observables);
   }
 
-  getTransactions(page: number, transactions?: Transaction[]) {
+  getTransactions(page: number, transactions: Transaction[]) {
     const pageSize = 15;
     const queryConstrains: QueryConstraint[] = [orderBy('date', 'desc')];
-    if (page > 1) queryConstrains.push(startAfter(transactions![transactions!?.length - 1].date));
+    if (page > 1) queryConstrains.push(startAfter(transactions[transactions.length - 1].date));
     queryConstrains.push(limit(pageSize));
     return this.firebaseService.getDocuments<Transaction>(Collection.Transaction, {
       queryConstrains,
