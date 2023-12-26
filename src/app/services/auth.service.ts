@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, map } from 'rxjs';
+import { from, map, take } from 'rxjs';
 
 import { Auth, User, signInWithEmailAndPassword, user } from '@angular/fire/auth';
 
@@ -10,14 +10,25 @@ export class AuthService {
 
   constructor(private auth: Auth) {
     console.log('Create AuthService Instance');
-    user(auth).subscribe((user: User | null) => {
-      console.log('User status', user);
-      this.user = user;
-    });
+  }
+
+  isLoggedUser() {
+    return user(this.auth).pipe(
+      take(1),
+      map(user => {
+        this.user = user;
+        return !!this.user;
+      })
+    );
   }
 
   logIn(email: string, password: string) {
-    return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(map(() => undefined));
+    return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+      map(data => {
+        this.user = data.user;
+        return undefined;
+      })
+    );
   }
 
 }
