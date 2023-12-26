@@ -12,7 +12,8 @@ export default [
     component: HomeComponent,
     providers: [
       AccountService,
-      FirebaseService
+      FirebaseService,
+      AccountService
     ],
     children: [
       {

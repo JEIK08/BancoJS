@@ -17,6 +17,10 @@ import {
   IonTitle,
   IonToolbar
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { addCircleSharp, chevronDownOutline } from 'ionicons/icons';
+
+import { AccountFormComponent } from './account-form/account-form.component';
 
 export const IMPORTS = [
   CurrencyPipe,
@@ -35,5 +39,10 @@ export const IMPORTS = [
   IonSpinner,
   IonText,
   IonTitle,
-  IonToolbar
-]
+  IonToolbar,
+  AccountFormComponent
+];
+
+export const addComponentIcons = () => {
+  addIcons({ addCircleSharp, chevronDownOutline });
+};

@@ -14,7 +14,7 @@ export class AccountService {
     this.accountsSubject = new BehaviorSubject(undefined as any);
     this.firebaseService.listenCollection(Collection.Account).pipe(
       concatMap(() => this.firebaseService.getDocuments<Account>(Collection.Account)),
-      tap(() => console.log('update accounts list'))
+      tap(accounts => console.log('update accounts list', accounts))
     ).subscribe(accounts => this.accountsSubject.next(accounts));
     // TODO: Stop listening on logout
     // TODO: Check received data on changes, verify if request or update in front

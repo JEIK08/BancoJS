@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 
-import { addIcons } from 'ionicons';
-import { addCircleSharp, chevronDownOutline } from 'ionicons/icons';
-
 import { AccountService } from '../services/accounts.service';
 
 import { Account } from 'src/app/interfaces/account';
-import { IMPORTS } from './accounts.utils';
+import { IMPORTS, addComponentIcons } from './accounts.utils';
 
 @Component({
   selector: 'app-accounts',
@@ -19,12 +16,11 @@ export default class AccountsPage {
 
   public accounts?: Account[];
   public accordeonValues?: string[];
-  public isFormOpen: boolean;
+  public isFormOpen: boolean = true;
   public selectedAccount?: Account;
 
   constructor(private accountsService: AccountService) {
-    addIcons({ addCircleSharp, chevronDownOutline });
-    this.isFormOpen = false;
+    addComponentIcons();
     this.accountsService.getAccounts().subscribe(accounts => {
       this.accordeonValues = [];
       this.accounts = accounts;

@@ -36,3 +36,11 @@
 .bold-value {
   font-weight: bold;
 }
+
+// 
+
+ion-button > ion-spinner {
+  height: 20px;
+  width: 20px;
+  margin-right: 8px;
+}
