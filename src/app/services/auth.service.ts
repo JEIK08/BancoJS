@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   getDatabaseName() {
-    this.claims.database;
+    return this.claims.database;
   }
 
 }

@@ -31,7 +31,7 @@ export class FirebaseService {
   ) { }
 
   private getCollectionPath(collectionName: Collection) {
-    return `/Databases/${ this.authService.getDatabaseName }/${ collectionName }`;
+    return `/Databases/${ this.authService.getDatabaseName() }/${ collectionName }`;
   }
 
   private getCollectionRef(collectionName: Collection) {
@@ -93,7 +93,7 @@ export class FirebaseService {
   }
 
   addDocument(collectionName: Collection, data: any) {
-    return addDoc(this.getCollectionRef(collectionName), data);
+    return from(addDoc(this.getCollectionRef(collectionName), data)).pipe(map(() => undefined));
   }
 
   updateDocument<T>(collectionName: Collection, id: string, data: Partial<T>) {
