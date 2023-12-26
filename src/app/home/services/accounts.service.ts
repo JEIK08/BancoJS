@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, concatMap, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, takeUntil, tap } from 'rxjs';
 
 import { Collection, FirebaseService } from './firebase.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Account, Pocket } from '../../interfaces/account';
 
@@ -10,14 +11,23 @@ export class AccountService {
 
   private accountsSubject: BehaviorSubject<Account[] | undefined>;
 
-  constructor(private firebaseService: FirebaseService) {
+  constructor(
+    private firebaseService: FirebaseService,
+    private authService: AuthService,
+  ) {
     this.accountsSubject = new BehaviorSubject(undefined as any);
-    this.firebaseService.listenCollection(Collection.Account).pipe(
-      concatMap(() => this.firebaseService.getDocuments<Account>(Collection.Account)),
-      tap(accounts => console.log('update accounts list', accounts))
-    ).subscribe(accounts => this.accountsSubject.next(accounts));
-    // TODO: Stop listening on logout
     // TODO: Check received data on changes, verify if request or update in front
+  }
+
+  listenAccounts() {
+    this.firebaseService.listenCollection(Collection.Account).pipe(
+      takeUntil(
+        this.authService.onLogOut().pipe(
+          tap(() => this.accountsSubject.next(undefined))
+        )
+      ),
+      concatMap(() => this.firebaseService.getDocuments<Account>(Collection.Account)),
+    ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
   getAccounts() {

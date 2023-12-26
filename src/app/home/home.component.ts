@@ -1,25 +1,42 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { cashOutline, listOutline } from 'ionicons/icons';
+import { ViewWillEnter } from '@ionic/angular';
+
+import { AuthService } from '../services/auth.service';
+import { AccountService } from './services/accounts.service';
+
+import { IMPORTS, addComponentIcons } from './home.utils';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   standalone: true,
-  imports: [
-    IonIcon,
-    IonLabel,
-    IonTabBar,
-    IonTabButton,
-    IonTabs
-  ]
+  imports: IMPORTS
 })
-export default class HomeComponent {
+export default class HomeComponent implements ViewWillEnter {
 
-  constructor() {
-    addIcons({ cashOutline, listOutline });
+  private isLoggingOut: boolean = false;
+
+  constructor(
+    private authService: AuthService,
+    private accountService: AccountService,
+    private router: Router
+  ) {
+    addComponentIcons();
+  }
+
+  logOut() {
+    if (this.isLoggingOut) return;
+    this.isLoggingOut = true;
+    this.authService.logOut().subscribe(() => {
+      this.router.navigate(['login']);
+      this.isLoggingOut = false;
+    });
+  }
+
+  ionViewWillEnter() {
+    this.accountService.listenAccounts();
   }
 
 }

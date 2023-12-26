@@ -1,23 +1,31 @@
 import { Injectable } from '@angular/core';
-import { concatMap, from, map, of, take } from 'rxjs';
+import { Observable, concatMap, filter, from, map, of, take } from 'rxjs';
 
-import { Auth, User, signInWithEmailAndPassword, user } from '@angular/fire/auth';
+import { Auth, User, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
 
 @Injectable()
 export class AuthService {
 
-  private user: User | null = null;
   private claims: { isAdmin: boolean, database: string } = { isAdmin: false, database: '' };
+  private logOutObservable: Observable<null>;
 
-  constructor(private auth: Auth) { }
+  constructor(private auth: Auth) {
+    this.logOutObservable = user(this.auth).pipe(
+      filter(user => !user),
+      map(() => {
+        this.claims.isAdmin = false;
+        this.claims.database = '';
+        return null;
+      })
+    );
+  }
 
   private saveUserData(user: User | null) {
-    this.user = user;
     if (!user) return of(false);
     return from(user.getIdTokenResult()).pipe(
       map(results => {
         this.claims = results.claims as any;
-        return !!this.user;
+        return !!user;
       })
     );
   }
@@ -33,6 +41,14 @@ export class AuthService {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       concatMap(({ user }) => this.saveUserData(user))
     );
+  }
+
+  onLogOut() {
+    return this.logOutObservable;
+  }
+
+  logOut() {
+    return from(signOut(this.auth));
   }
 
   getDatabaseName() {

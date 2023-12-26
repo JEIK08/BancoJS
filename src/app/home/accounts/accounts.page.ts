@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { takeUntil } from 'rxjs';
 
 import { AccountService } from '../services/accounts.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Account } from 'src/app/interfaces/account';
 import { IMPORTS, addComponentIcons } from './accounts.utils';
@@ -16,12 +18,17 @@ export default class AccountsPage {
 
   public accounts?: Account[];
   public accordeonValues?: string[];
-  public isFormOpen: boolean = true;
+  public isFormOpen: boolean = false;
   public selectedAccount?: Account;
 
-  constructor(private accountsService: AccountService) {
+  constructor(
+    private accountsService: AccountService,
+    private authService: AuthService
+  ) {
     addComponentIcons();
-    this.accountsService.getAccounts().subscribe(accounts => {
+    this.accountsService.getAccounts().pipe(
+      takeUntil(this.authService.onLogOut())
+    ).subscribe(accounts => {
       this.accordeonValues = [];
       this.accounts = accounts;
     });
