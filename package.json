@@ -13,8 +13,8 @@
     "firebase:blank": "firebase emulators:start --only firestore,auth",
     "firebase": "firebase emulators:start --only firestore,auth --import firebase-data",
     "firebase:save": "firebase emulators:export firebase-data",
-    "dev": "concurrently \"ionic serve --no-open\" \"npm run firebase\"",
-    "dev:open": "concurrently \"ionic serve\" \"npm run firebase\""
+    "dev": "start cmd /k \"npm run firebase\" && ionic serve --no-open",
+    "ionic": "ionic serve --no-open"
   },
   "private": true,
   "dependencies": {
@@ -54,7 +54,6 @@
     "@types/jasmine": "~5.1.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "concurrently": "^8.2.2",
     "eslint": "^7.26.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jsdoc": "30.7.6",

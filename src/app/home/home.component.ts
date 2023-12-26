@@ -16,6 +16,7 @@ import { IMPORTS, addComponentIcons } from './home.utils';
 })
 export default class HomeComponent implements ViewWillEnter {
 
+  public isFormOpen: boolean = false;
   private isLoggingOut: boolean = false;
 
   constructor(

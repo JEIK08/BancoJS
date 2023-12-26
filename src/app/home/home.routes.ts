@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AccountService } from './services/accounts.service';
 import { FirebaseService } from './services/firebase.service';
+import { TransactionsService } from './services/transactions.service';
 
 import HomeComponent from './home.component';
 import AccountsPage from './accounts/accounts.page';
@@ -13,7 +14,8 @@ export default [
     providers: [
       AccountService,
       FirebaseService,
-      AccountService
+      AccountService,
+      TransactionsService
     ],
     children: [
       {

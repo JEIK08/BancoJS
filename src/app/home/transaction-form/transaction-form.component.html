@@ -70,41 +70,60 @@
       <ng-container formGroupName="origin">
         <ion-item>
           <ion-select label="Cuenta de origen" interface="popover" formControlName="account">
-            <ion-select-option *ngFor="let account of accounts" [value]="account">{{ account.name }}</ion-select-option>
+            @for (account of accounts; track account.id) {
+              <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+            }
           </ion-select>
         </ion-item>
-        <ion-item *ngIf="form.value.origin.account?.isActive">
-          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-            <ion-select-option *ngIf="form.value.type === TransactionType.TRANSFER" [value]="0">Deuda</ion-select-option>
-            <ion-select-option *ngFor="let pocket of form.value.origin.account.pockets" [value]="pocket">{{ pocket.name }}</ion-select-option>
-          </ion-select>
-        </ion-item>
+        @if (form.value.origin.account?.isActive) {
+          <ion-item>
+            <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+              @if (form.value.type === TransactionType.TRANSFER) {
+                <ion-select-option [value]="0">Deuda</ion-select-option>
+              }
+              @for (pocket of form.value.origin.account.pockets; track pocket.name) {
+                <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        }
       </ng-container>
-      <ng-container formGroupName="destination" *ngIf="showDestination">
-        <ion-item>
-          <ion-select
-            [label]="'Cuenta ' + (form.value.type === TransactionType.OUT ? 'afectada' : 'de Destino')"
-            interface="popover"
-            formControlName="account">
-            <ion-select-option *ngFor="let account of destinationAccounts" [value]="account">{{ account.name }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item *ngIf="form.value.destination.account?.isActive">
-          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-            <ion-select-option *ngFor="let pocket of form.value.destination.account.pockets" [value]="pocket">{{ pocket.name }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ng-container>
+      @if (showDestination) {
+        <ng-container formGroupName="destination">
+          <ion-item>
+            <ion-select
+              [label]="'Cuenta ' + (form.value.type === TransactionType.OUT ? 'afectada' : 'de Destino')"
+              interface="popover"
+              formControlName="account">
+              @for (account of destinationAccounts; track account.id) {
+                <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          @if (form.value.destination.account?.isActive) {
+            <ion-item>
+              <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+                @for (pocket of form.value.destination.account.pockets; track pocket.name) {
+                  <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          }
+        </ng-container>
+      }
     </ion-list>
   </ion-content>
 
   <ion-footer>
     <ion-row>
       <ion-col>
-        <ion-button expand="block" color="medium" (click)="onClose.emit()">Cancelar</ion-button>
+        <ion-button expand="block" color="medium" (click)="closeModal.emit()">Cancelar</ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block" type="submit" [disabled]="form.invalid || loading">Crear</ion-button>
+        <ion-button expand="block" type="submit" [disabled]="form.invalid || isLoading">
+          @if (isLoading) { <ion-spinner></ion-spinner> }
+          Crear
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-footer>

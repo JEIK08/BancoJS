@@ -79,12 +79,14 @@ export class FirebaseService {
     );
   }
 
-  getDocument<T>(collectionName: Collection, id: string): Promise<T> {
-    return getDoc(this.getDocumentRef(collectionName, id)).then(docRef => new Promise(resolve => {
-      const doc: any = docRef.data();
-      doc.id = docRef.id;
-      resolve(doc);
-    }));
+  getDocument<T>(collectionName: Collection, id: string): Observable<T> {
+    return from(getDoc(this.getDocumentRef(collectionName, id))).pipe(
+      map(docRef => {
+        const doc: any = docRef.data();
+        doc.id = docRef.id;
+        return doc;
+      })
+    );
   }
 
   addDocument(collectionName: Collection, data: any) {
@@ -92,7 +94,7 @@ export class FirebaseService {
   }
 
   updateDocument<T>(collectionName: Collection, id: string, data: Partial<T>) {
-    return updateDoc(this.getDocumentRef(collectionName, id) as any, data as any);
+    return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
   }
 
   mapDate(date: any) {
@@ -100,7 +102,7 @@ export class FirebaseService {
   }
 
   getDate(date: Date) {
-    return Timestamp.fromDate(date)
+    return Timestamp.fromDate(date);
   }
 
 }

@@ -4,47 +4,44 @@ import { Subject, delay, merge, takeUntil } from 'rxjs';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 import { TransactionsService } from 'src/app/home/services/transactions.service';
+
 import { Account } from 'src/app/interfaces/account';
 import { TransactionType } from 'src/app/interfaces/transaction';
+import { IMPORTS, addComponentIcons } from './transaction-forn.utils';
 
 @Component({
   selector: 'app-transaction-form',
   templateUrl: './transaction-form.component.html',
   styleUrls: ['./transaction-form.component.scss'],
+  standalone: true,
+  imports: IMPORTS
 })
 export class TransactionFormComponent implements OnDestroy {
 
-  @Output('onClose') public onClose: EventEmitter<void>;
+  @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
   public form: FormGroup;
-  public TransactionType: typeof TransactionType;
   public calendarInitialDate?: string;
-  public timeZoneOffset: number;
   public accounts?: Account[];
   public destinationAccounts?: Account[];
-  public showDestination: boolean;
-  public showToast: boolean;
-  public loading: boolean;
+  public TransactionType: typeof TransactionType = TransactionType;
+  public timeZoneOffset: number = (new Date()).getTimezoneOffset() * 60 * 1000;
+  public showDestination: boolean = false;
+  public showToast: boolean = false;
+  public isLoading: boolean = false;
 
   private activeAccounts?: Account[];
-  private onDestroySubject: Subject<void>;
+  private onDestroySubject: Subject<void> = new Subject();
 
   constructor(
     private accountService: AccountService,
     private transactionsService: TransactionsService,
     private formBuilder: FormBuilder
   ) {
-    this.onClose = new EventEmitter();
-    this.TransactionType = TransactionType;
-    const today = new Date();
-    this.timeZoneOffset = today.getTimezoneOffset() * 60 * 1000;
-    this.showDestination = false;
-    this.showToast = false;
-    this.loading = false;
-    this.onDestroySubject = new Subject();
+    addComponentIcons();
     this.accountService.getAccounts().subscribe(accounts => {
       this.accounts = accounts;
-      this.activeAccounts = accounts.filter(({ isActive }) => isActive);
+      this.activeAccounts = accounts?.filter(({ isActive }) => isActive);
     });
     this.form = this.formBuilder.group({
       description: [null, Validators.required],
@@ -136,8 +133,8 @@ export class TransactionFormComponent implements OnDestroy {
       this.showToast = true;
       return;
     }
-    this.loading = true;
-    this.transactionsService.createTransaction(this.form.getRawValue()).then(() => this.onClose.emit());
+    this.isLoading = true;
+    this.transactionsService.createTransaction(this.form.getRawValue()).subscribe(() => this.closeModal.emit());
   }
 
   ngOnDestroy() {
