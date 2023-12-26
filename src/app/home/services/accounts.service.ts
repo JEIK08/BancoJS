@@ -16,7 +16,6 @@ export class AccountService {
     private authService: AuthService,
   ) {
     this.accountsSubject = new BehaviorSubject(undefined as any);
-    // TODO: Check received data on changes, verify if request or update in front
   }
 
   listenAccounts() {

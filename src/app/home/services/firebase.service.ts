@@ -43,15 +43,14 @@ export class FirebaseService {
   }
 
   listenCollection(collectionName: Collection) {
-    const subject = new Subject();
+    const subject = new Subject<void>();
     const observable = subject.asObservable();
     const unsubscriber = onSnapshot(
       this.getCollectionRef(collectionName),
-      subject.next,
-      subject.error
+      () => subject.next(),
+      error => subject.error(error),
     );
     return observable.pipe(
-      map(() => undefined),
       finalize(() => {
         subject.complete();
         unsubscriber();
