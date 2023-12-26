@@ -31,7 +31,7 @@ export default class HomeComponent implements ViewWillEnter {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
     this.authService.logOut().subscribe(() => {
-      this.router.navigate(['login']);
+      this.router.navigate(['login'], { replaceUrl: true });
       this.isLoggingOut = false;
     });
   }

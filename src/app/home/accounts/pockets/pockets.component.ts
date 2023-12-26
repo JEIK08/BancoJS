@@ -3,28 +3,33 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
+
 import { Account, Pocket } from 'src/app/interfaces/account';
+import { IMPORTS, addComponentIcons } from './pockets.utils';
 
 @Component({
   selector: 'app-pockets',
   templateUrl: './pockets.component.html',
   styleUrls: ['./pockets.component.scss'],
+  standalone: true,
+  imports: IMPORTS
 })
 export class PocketsComponent implements OnInit {
 
   @Input() public account!: Account;
-  @Output('onClose') public onClose: EventEmitter<void>;
+  @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
   public pockets!: Pocket[];
   public available!: number;
   public debt!: number;
   public total!: number;
+  public isLoading: boolean = false;
 
   constructor(
     private accountService: AccountService,
     private toastController: ToastController
   ) {
-    this.onClose = new EventEmitter();
+    addComponentIcons();
   }
 
   ngOnInit() {
@@ -52,6 +57,8 @@ export class PocketsComponent implements OnInit {
       }).then(toast => toast.present());
       return;
     }
+
+    this.isLoading = true;
     if (this.account.isActive) {
       this.account.debt;
     }
@@ -59,7 +66,7 @@ export class PocketsComponent implements OnInit {
       this.account.id,
       this.debt,
       [{ name: this.account.pockets[0].name, value: this.available }, ...this.pockets]
-    ).then(() => this.onClose.emit());
+    ).subscribe(() => this.closeModal.emit());
   }
 
 }

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { InfiniteScrollCustomEvent } from '@ionic/angular';
+import { takeUntil } from 'rxjs';
 
 import { TransactionsService } from '../services/transactions.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Transaction, TransactionType } from 'src/app/interfaces/transaction';
 import { IMPORTS } from './transactions.utils';
@@ -22,8 +24,13 @@ export default class TransactionsPage {
 
   private completePages: boolean = false;
 
-  constructor(private transactionsService: TransactionsService) {
-    this.transactionsService.listenTransactions().subscribe(() => {
+  constructor(
+    private transactionsService: TransactionsService,
+    private authService: AuthService
+  ) {
+    this.transactionsService.listenTransactions().pipe(
+      takeUntil(this.authService.onLogOut())
+    ).subscribe(() => {
       this.transactions = [];
       this.separators = {};
       this.page = 0;

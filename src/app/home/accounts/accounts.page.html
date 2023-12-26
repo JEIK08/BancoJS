@@ -77,7 +77,9 @@
 
   <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
     <ng-template>
-      <!-- <app-pockets *ngIf="selectedAccount" [account]="selectedAccount" (onClose)="selectedAccount = undefined"></app-pockets> -->
+      @if (selectedAccount) {
+        <app-pockets [account]="selectedAccount" (closeModal)="selectedAccount = undefined"></app-pockets>
+      }
     </ng-template>
   </ion-modal>
 </ion-content>

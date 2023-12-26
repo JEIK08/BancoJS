@@ -21,6 +21,7 @@ import { addIcons } from 'ionicons';
 import { addCircleSharp, chevronDownOutline } from 'ionicons/icons';
 
 import { AccountFormComponent } from './account-form/account-form.component';
+import { PocketsComponent } from './pockets/pockets.component';
 
 export const IMPORTS = [
   CurrencyPipe,
@@ -40,7 +41,8 @@ export const IMPORTS = [
   IonText,
   IonTitle,
   IonToolbar,
-  AccountFormComponent
+  AccountFormComponent,
+  PocketsComponent
 ];
 
 export const addComponentIcons = () => {
