@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { InfiniteScrollCustomEvent } from '@ionic/angular';
+import { Component, ViewChild } from '@angular/core';
 import { takeUntil } from 'rxjs';
+
+import { IonInfiniteScroll } from '@ionic/angular/standalone';
 
 import { TransactionsService } from '../services/transactions.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -16,11 +17,13 @@ import { IMPORTS } from './transactions.utils';
 })
 export default class TransactionsPage {
 
+  @ViewChild(IonInfiniteScroll) infiniteScroll!: IonInfiniteScroll;
+
   public transactions: Transaction[] = [];
   public separators: { [id: string]: string } = {};
   public page: number = 0;
-  public TransactionType: typeof TransactionType = TransactionType;
   public isFirstLoad: boolean = true;
+  public TransactionType: typeof TransactionType = TransactionType;
 
   private completePages: boolean = false;
 
@@ -34,16 +37,19 @@ export default class TransactionsPage {
       this.transactions = [];
       this.separators = {};
       this.page = 0;
+      this.isFirstLoad = true;
       this.completePages = false;
       this.getTransactions();
     });
   }
 
-  getTransactions(scrollEvent?: InfiniteScrollCustomEvent) {
+  getTransactions() {
     if (this.completePages) {
-      scrollEvent?.target.complete();
+      this.infiniteScroll.complete();
       return;
     }
+
+    if (this.isFirstLoad) this.infiniteScroll.disabled = true;
     this.page++;
     this.transactionsService.getTransactions(this.page, this.transactions).subscribe(transactions => {
       let lastDate: string = this.transactions[this.transactions.length - 1]?.date.toLocaleDateString() ?? '';
@@ -55,8 +61,11 @@ export default class TransactionsPage {
       });
       this.transactions.push(...transactions);
       this.completePages = transactions.length == 0;
-      this.isFirstLoad = false;
-      scrollEvent?.target.complete();
+      if (this.isFirstLoad) {
+        this.infiniteScroll.disabled = false;
+        this.isFirstLoad = false;
+      }
+      this.infiniteScroll.complete();
     });
   }
 
