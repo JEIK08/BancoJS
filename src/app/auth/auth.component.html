@@ -18,7 +18,10 @@
         />
       </ion-item>
       <ion-item>
-        <ion-button type="submit" size="default">Iniciar Sesión</ion-button>
+        <ion-button type="submit" size="default" [disabled]="isLoading">
+          @if (isLoading) { <ion-spinner></ion-spinner> }
+          Iniciar Sesión
+        </ion-button>
       </ion-item>
     </ion-list>
   </form>

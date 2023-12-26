@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { IonButton, IonContent, IonInput, IonItem, IonList } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonInput, IonItem, IonList, IonSpinner } from '@ionic/angular/standalone';
 
 import { AuthService } from '../services/auth.service';
 
@@ -17,12 +17,14 @@ import { AuthService } from '../services/auth.service';
     IonContent,
     IonInput,
     IonItem,
-    IonList
+    IonList,
+    IonSpinner
   ]
 })
 export default class AuthComponent {
 
   public form: FormGroup;
+  public isLoading: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -41,8 +43,13 @@ export default class AuthComponent {
       return;
     }
 
-    this.authService.logIn(this.form.value.email, this.form.value.password).subscribe(loggedIn => {
-      if (loggedIn) this.router.navigate(['']);
+    this.isLoading = true;
+    this.authService.logIn(this.form.value.email, this.form.value.password).subscribe({
+      next: loggedIn => {
+        this.isLoading = false;
+        if (loggedIn) this.router.navigate(['']);
+      },
+      error: () => this.isLoading = false
     });
   }
 
