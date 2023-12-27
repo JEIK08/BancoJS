@@ -12,10 +12,8 @@ import {
   addDoc,
   updateDoc,
   Timestamp,
-  QueryConstraint,
+  QueryConstraint
 } from '@angular/fire/firestore';
-
-import { AuthService } from 'src/app/services/auth.service';
 
 export enum Collection {
   Account = 'Account',
@@ -25,13 +23,12 @@ export enum Collection {
 @Injectable()
 export class FirebaseService {
 
-  constructor(
-    private firestore: Firestore,
-    private authService: AuthService
-  ) { }
+  private database: string = '';
+
+  constructor(private firestore: Firestore) { }
 
   private getCollectionPath(collectionName: Collection) {
-    return `/Databases/${ this.authService.getDatabaseName() }/${ collectionName }`;
+    return `/Databases/${ this.database }/${ collectionName }`;
   }
 
   private getCollectionRef(collectionName: Collection) {
@@ -40,6 +37,19 @@ export class FirebaseService {
 
   private getDocumentRef(collectionName: Collection, id: string) {
     return doc(this.firestore, this.getCollectionPath(collectionName), id);
+  }
+
+  setUserDatabase(uid: string) {
+    return from(
+      getDoc(
+        doc(this.firestore, `/Users`, uid)
+      )
+    ).pipe(
+      map(docRef => {
+        this.database = docRef.data()?.['database'];
+        return;
+      })
+    );
   }
 
   listenCollection(collectionName: Collection) {

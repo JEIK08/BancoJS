@@ -3,31 +3,26 @@ import { Observable, concatMap, filter, from, map, of, take } from 'rxjs';
 
 import { Auth, User, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
 
+import { FirebaseService } from '../home/services/firebase.service';
+
 @Injectable()
 export class AuthService {
 
-  private claims: { isAdmin: boolean, database: string } = { isAdmin: false, database: '' };
-  private logOutObservable: Observable<null>;
+  private logOutObservable: Observable<void>;
 
-  constructor(private auth: Auth) {
+  constructor(
+    private auth: Auth,
+    private firebaseService: FirebaseService
+  ) {
     this.logOutObservable = user(this.auth).pipe(
       filter(user => !user),
-      map(() => {
-        this.claims.isAdmin = false;
-        this.claims.database = '';
-        return null;
-      })
+      map(() => {})
     );
   }
 
   private saveUserData(user: User | null) {
     if (!user) return of(false);
-    return from(user.getIdTokenResult()).pipe(
-      map(results => {
-        this.claims = results.claims as any;
-        return !!user;
-      })
-    );
+    return this.firebaseService.setUserDatabase(user.uid).pipe(map(() => true));
   }
 
   isLoggedUser() {
@@ -49,10 +44,6 @@ export class AuthService {
 
   logOut() {
     return from(signOut(this.auth));
-  }
-
-  getDatabaseName() {
-    return this.claims.database;
   }
 
 }

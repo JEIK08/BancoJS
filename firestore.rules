@@ -1,8 +1,20 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    match /Users/{userId} {
+      allow get: if isAuthenticated() && request.auth.uid == userId;
+    }
+
     match /Databases/{dbName}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.token.database == dbName;
+      function itsDatabase() {
+        return isAuthenticated() && get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.database == dbName;
+      }
+
+      allow read, write: if itsDatabase();
     }
   }
 }

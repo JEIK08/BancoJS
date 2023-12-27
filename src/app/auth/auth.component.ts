@@ -46,8 +46,7 @@ export default class AuthComponent {
     this.isLoading = true;
     this.authService.logIn(this.form.value.email, this.form.value.password).subscribe({
       next: loggedIn => {
-        this.isLoading = false;
-        if (loggedIn) this.router.navigate(['']);
+        if (loggedIn) this.router.navigate([''], { replaceUrl: true });
       },
       error: () => this.isLoading = false
     });
