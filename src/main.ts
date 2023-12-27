@@ -10,7 +10,7 @@ import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
 import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { AuthService } from './app/services/auth.service';
-import { FirebaseService } from './app/home/services/firebase.service';
+import { FirestoreService } from './app/services/firestore.service';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
@@ -22,7 +22,7 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     AuthService,
-    FirebaseService,
+    FirestoreService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes),

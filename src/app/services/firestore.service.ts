@@ -21,7 +21,7 @@ export enum Collection {
 }
 
 @Injectable()
-export class FirebaseService {
+export class FirestoreService {
 
   private database: string = '';
 

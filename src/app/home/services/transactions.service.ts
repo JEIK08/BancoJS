@@ -3,7 +3,7 @@ import { Observable, forkJoin } from 'rxjs';
 
 import { QueryConstraint, limit, orderBy, startAfter } from '@angular/fire/firestore';
 
-import { Collection, FirebaseService } from './firebase.service';
+import { Collection, FirestoreService } from '../../services/firestore.service';
 
 import { Account, Pocket } from '../../interfaces/account';
 import { TransactionType, Transaction } from '../../interfaces/transaction';
@@ -11,10 +11,10 @@ import { TransactionType, Transaction } from '../../interfaces/transaction';
 @Injectable()
 export class TransactionsService {
 
-  constructor(private firebaseService: FirebaseService) { }
+  constructor(private firestoreService: FirestoreService) { }
 
   listenTransactions() {
-    return this.firebaseService.listenCollection(Collection.Transaction);
+    return this.firestoreService.listenCollection(Collection.Transaction);
   }
 
   createTransaction(data: any) {
@@ -29,7 +29,7 @@ export class TransactionsService {
       description: data.description,
       type,
       value,
-      date: this.firebaseService.getDate(data.date) as any,
+      date: this.firestoreService.getDate(data.date) as any,
       account: {
         name: origin.name,
         isActive: origin.isActive
@@ -71,7 +71,7 @@ export class TransactionsService {
       }
       if (originPocket as any != 0) originPocket.value = Math.round(originPocket.value * 100) / 100;
       observables.push(
-        this.firebaseService.updateDocument<Account>(Collection.Account, origin.id, {
+        this.firestoreService.updateDocument<Account>(Collection.Account, origin.id, {
           value: Math.round(accountValue * 100) / 100,
           pockets: origin.pockets,
           debt: Math.round(accountDebt * 100) / 100
@@ -81,14 +81,14 @@ export class TransactionsService {
         if (destination.isActive) {
           destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
           observables.push(
-            this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
+            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
               value: Math.round((destination.value + value) * 100) / 100,
               pockets: destination.pockets
             })
           );
         } else {
           observables.push(
-            this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
+            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
               value: Math.round((destination.value - value) * 100) / 100
             })
           );
@@ -96,14 +96,14 @@ export class TransactionsService {
       }
     } else {
       observables.push(
-        this.firebaseService.updateDocument<Account>(Collection.Account, origin.id, {
+        this.firestoreService.updateDocument<Account>(Collection.Account, origin.id, {
           value: Math.round((origin.value + (type == TransactionType.IN ? -value : value)) * 100) / 100
         })
       );
       if (type == TransactionType.OUT) {
         destinationPocket.value = Math.round((destinationPocket.value - value) * 100) / 100;
         observables.push(
-          this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
+          this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
             debt: Math.round((destination.debt + value) * 100) / 100,
             pockets: destination.pockets
           })
@@ -113,14 +113,14 @@ export class TransactionsService {
         if (destination.isActive) {
           destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
           observables.push(
-            this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
+            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
               value: Math.round((destination.value + value) * 100) / 100,
               pockets: destination.pockets
             })
           );
         } else {
           observables.push(
-            this.firebaseService.updateDocument<Account>(Collection.Account, destination.id, {
+            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
               value: Math.round((destination.value - value) * 100) / 100
             })
           );
@@ -128,7 +128,7 @@ export class TransactionsService {
       }
     }
 
-    observables.push(this.firebaseService.addDocument(Collection.Transaction, transaction));
+    observables.push(this.firestoreService.addDocument(Collection.Transaction, transaction));
     return forkJoin(observables);
   }
 
@@ -137,9 +137,9 @@ export class TransactionsService {
     const queryConstrains: QueryConstraint[] = [orderBy('date', 'desc')];
     if (page > 1) queryConstrains.push(startAfter(transactions[transactions.length - 1].date));
     queryConstrains.push(limit(pageSize));
-    return this.firebaseService.getDocuments<Transaction>(Collection.Transaction, {
+    return this.firestoreService.getDocuments<Transaction>(Collection.Transaction, {
       queryConstrains,
-      mapFunction: transaction => transaction.date = this.firebaseService.mapDate(transaction.date)
+      mapFunction: transaction => transaction.date = this.firestoreService.mapDate(transaction.date)
     });
   }
 

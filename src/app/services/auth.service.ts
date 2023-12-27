@@ -3,7 +3,7 @@ import { Observable, concatMap, filter, from, map, of, take } from 'rxjs';
 
 import { Auth, User, signInWithEmailAndPassword, signOut, user } from '@angular/fire/auth';
 
-import { FirebaseService } from '../home/services/firebase.service';
+import { FirestoreService } from './firestore.service';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
 
   constructor(
     private auth: Auth,
-    private firebaseService: FirebaseService
+    private firestoreService: FirestoreService
   ) {
     this.logOutObservable = user(this.auth).pipe(
       filter(user => !user),
@@ -22,7 +22,7 @@ export class AuthService {
 
   private saveUserData(user: User | null) {
     if (!user) return of(false);
-    return this.firebaseService.setUserDatabase(user.uid).pipe(map(() => true));
+    return this.firestoreService.setUserDatabase(user.uid).pipe(map(() => true));
   }
 
   isLoggedUser() {
