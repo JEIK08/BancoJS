@@ -32,8 +32,8 @@ export default class AuthComponent {
     private router: Router
   ) {
     this.form = this.formBuilder.group({
-      email: ['jjsuarez8@hotmail.es', [Validators.required, Validators.email]],
-      password: ['123456', Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
   }
 

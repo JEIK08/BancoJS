@@ -5,13 +5,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    match /Users/{userId} {
+    match /User/{userId} {
       allow get: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    match /Databases/{dbName}/{document=**} {
+    match /Database/{dbName}/{document=**} {
       function itsDatabase() {
-        return isAuthenticated() && get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.database == dbName;
+        return isAuthenticated() && get(/databases/$(database)/documents/User/$(request.auth.uid)).data.database == dbName;
       }
 
       allow read, write: if itsDatabase();

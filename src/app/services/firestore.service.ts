@@ -28,7 +28,7 @@ export class FirestoreService {
   constructor(private firestore: Firestore) { }
 
   private getCollectionPath(collectionName: Collection) {
-    return `/Databases/${ this.database }/${ collectionName }`;
+    return `/Database/${ this.database }/${ collectionName }`;
   }
 
   private getCollectionRef(collectionName: Collection) {
@@ -42,7 +42,7 @@ export class FirestoreService {
   setUserDatabase(uid: string) {
     return from(
       getDoc(
-        doc(this.firestore, `/Users`, uid)
+        doc(this.firestore, `/User`, uid)
       )
     ).pipe(
       map(docRef => {
