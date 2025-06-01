@@ -19,6 +19,7 @@ export class PocketsComponent implements OnInit {
   @Input() public account!: Account;
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
+  public accountName!: string;
   public pockets!: Pocket[];
   public available!: number;
   public debt!: number;
@@ -33,6 +34,7 @@ export class PocketsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.accountName = this.account.name;
     this.available = this.account.pockets[0].value;
     this.debt = this.account.debt;
     this.pockets = JSON.parse(JSON.stringify(this.account.pockets.slice(1)));
@@ -50,6 +52,14 @@ export class PocketsComponent implements OnInit {
   }
 
   save() {
+    if (!this.accountName) {
+      this.toastController.create({
+        message: 'Ingrese un nombre para la cuenta',
+        duration: 3000
+      }).then(toast => toast.present());
+      return;
+    }
+
     if (this.total !== this.account.value) {
       this.toastController.create({
         message: 'La suma de los valores de los bolsillos debe ser igual al valor de la cuenta',
@@ -62,8 +72,9 @@ export class PocketsComponent implements OnInit {
     if (this.account.isActive) {
       this.account.debt;
     }
-    this.accountService.updateAccountPockets(
+    this.accountService.updateAccount(
       this.account.id,
+      this.accountName,
       this.debt,
       [{ name: this.account.pockets[0].name, value: this.available }, ...this.pockets]
     ).subscribe(() => this.closeModal.emit());

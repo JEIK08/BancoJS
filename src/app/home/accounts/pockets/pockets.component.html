@@ -1,6 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title slot="start">{{ account.name }}</ion-title>
+    <ion-title>
+      <ion-input type="text" [(ngModel)]="accountName" />
+    </ion-title>
     <ion-text slot="end" class="ion-padding-end" class="ion-padding-end bold-value green">
       {{ account.value | currency:'':'$ ':'1.2-2' }}
     </ion-text>
@@ -14,19 +16,19 @@
         <span>Deuda</span><br>
         <small class="red">{{ debt | currency:'':'$ ':'1.2-2' }}</small>
       </ion-text>
-      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="debt" (ngModelChange)="setTotal()"></ion-input>
+      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="debt" (ngModelChange)="setTotal()" />
     </ion-item>
     <ion-item>
       <ion-text>
         <span>{{ account.pockets[0].name }}</span><br>
         <small class="green">{{ available | currency:'':'$ ':'1.2-2' }}</small>
       </ion-text>
-      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="available" (ngModelChange)="setTotal()"></ion-input>
+      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="available" (ngModelChange)="setTotal()" />
     </ion-item>
     @for (pocket of pockets; track i; let i = $index) {
       <ion-item>
-        <ion-input class="pocket-input" [helperText]="pocket.value | currency:'':'$ ':'1.2-2'" [(ngModel)]="pocket.name"></ion-input>
-        <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()"></ion-input>
+        <ion-input class="pocket-input" [helperText]="pocket.value | currency:'':'$ ':'1.2-2'" [(ngModel)]="pocket.name" />
+        <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()" />
         <ion-icon
           slot="end"
           name="close-circle-outline"
@@ -36,7 +38,7 @@
       </ion-item>
     }
     <ion-item>
-      <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="pockets.push({ name: '', value: 0 })"></ion-icon>
+      <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="pockets.push({ name: '', value: 0 })" />
     </ion-item>
   </ion-list>
 </ion-content>
@@ -64,7 +66,7 @@
         </ion-col>
         <ion-col>
           <ion-button expand="block" type="submit" [disabled]="isLoading" (click)="save()">
-            @if (isLoading) { <ion-spinner></ion-spinner> }
+            @if (isLoading) { <ion-spinner /> }
             Aceptar
           </ion-button>
         </ion-col>
