@@ -46,7 +46,7 @@ export class TransactionFormComponent implements OnDestroy {
     this.form = this.formBuilder.group({
       description: [null, Validators.required],
       type: [TransactionType.OUT, Validators.required],
-      value: [0, Validators.required],
+      value: [null, Validators.required],
       date: [new Date(), Validators.required],
       origin: this.formBuilder.group({
         account: [null, Validators.required],

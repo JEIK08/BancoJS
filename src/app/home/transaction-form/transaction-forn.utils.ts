@@ -1,4 +1,4 @@
-import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
@@ -28,7 +28,9 @@ import { calendarOutline, timeOutline } from 'ionicons/icons';
 export const IMPORTS = [
   FormsModule,
   ReactiveFormsModule,
+  CurrencyPipe,
   DatePipe,
+  NgClass,
   NgTemplateOutlet,
 
   IonButton,
