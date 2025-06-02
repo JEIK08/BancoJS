@@ -2,6 +2,9 @@
   <ion-toolbar>
     <ion-title>Transacciones</ion-title>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar placeholder="Filtrar" [formControl]="filterControl"></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -10,9 +13,9 @@
   @if (transactions.length) {
     <ion-list>
       @for (transaction of transactions; track transaction.id) {
-        @if (separators[transaction.id]) {
+        @if (transaction.isLastOfDay) {
           <ion-item-divider color="medium">
-            <ion-label class="bold-value">{{ separators[transaction.id] }}</ion-label>
+            <ion-label class="bold-value">{{ transaction.dateText }}</ion-label>
           </ion-item-divider>
         }
         <ion-item>
@@ -45,7 +48,7 @@
     </ion-list>
   }
 
-  <ion-infinite-scroll (ionInfinite)="getTransactions()">
+  <ion-infinite-scroll (ionInfinite)="getMoreTransactions()">
     <ion-infinite-scroll-content />
   </ion-infinite-scroll>
 </ion-content>

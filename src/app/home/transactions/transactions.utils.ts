@@ -1,4 +1,5 @@
 import { CurrencyPipe, NgTemplateOutlet } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import {
   IonContent,
@@ -9,6 +10,7 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonSearchbar,
   IonSpinner,
   IonText,
   IonTitle,
@@ -16,6 +18,7 @@ import {
 } from '@ionic/angular/standalone';
 
 export const IMPORTS = [
+  ReactiveFormsModule,
   CurrencyPipe,
   NgTemplateOutlet,
   IonContent,
@@ -26,6 +29,7 @@ export const IMPORTS = [
   IonItemDivider,
   IonLabel,
   IonList,
+  IonSearchbar,
   IonSpinner,
   IonText,
   IonTitle,

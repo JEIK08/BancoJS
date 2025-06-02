@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { EMPTY, Observable, expand, forkJoin, last, map } from 'rxjs';
 
 import { QueryConstraint, limit, orderBy, startAfter } from '@angular/fire/firestore';
 
@@ -10,6 +10,9 @@ import { TransactionType, Transaction } from '../../interfaces/transaction';
 
 @Injectable()
 export class TransactionsService {
+
+  private pageSize = 12;
+  private lastPageDate?: Transaction['date'];
 
   constructor(private firestoreService: FirestoreService) { }
 
@@ -132,15 +135,60 @@ export class TransactionsService {
     return forkJoin(observables);
   }
 
-  getTransactions(page: number, transactions: Transaction[]) {
-    const pageSize = 15;
-    const queryConstrains: QueryConstraint[] = [orderBy('date', 'desc')];
-    if (page > 1) queryConstrains.push(startAfter(transactions[transactions.length - 1].date));
-    queryConstrains.push(limit(pageSize));
-    return this.firestoreService.getDocuments<Transaction>(Collection.Transaction, {
-      queryConstrains,
-      mapFunction: transaction => transaction.date = this.firestoreService.mapDate(transaction.date)
-    });
+  getTransactions(filterText = '', lastDate?: Transaction['dateText']) {
+    const queryConstrains: QueryConstraint[] = [orderBy('date', 'desc'), limit(this.pageSize)];
+    let emptyPages = 0;
+    const filteredPage: Transaction[] = [];
+
+    filterText = filterText?.toLowerCase();
+
+    return this.firestoreService.getDocuments<Transaction>(
+      Collection.Transaction,
+      { queryConstrains: lastDate ? [...queryConstrains, startAfter(this.lastPageDate)] : queryConstrains }
+    ).pipe(
+      expand(transactions => {
+        this.lastPageDate = transactions.at(-1)?.date;
+        return filteredPage.length == this.pageSize || emptyPages == 7 || transactions.length < this.pageSize
+          ? EMPTY
+          : this.firestoreService.getDocuments<Transaction>(
+            Collection.Transaction,
+            { queryConstrains: [...queryConstrains, startAfter(this.lastPageDate)] }
+          );
+      }),
+      map(transactions => {
+        let someFiltered = false;
+
+        transactions.some(transaction => {
+          transaction.date = this.firestoreService.mapDate(transaction.date);
+          transaction.dateText = transaction.date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+          const isFiltered = !filterText ||
+            transaction.description.toLowerCase().includes(filterText) ||
+            transaction.account.name.toLowerCase().includes(filterText) ||
+            transaction.account.pocket?.toLowerCase().includes(filterText) ||
+            transaction.destination?.name.toLowerCase().includes(filterText) ||
+            transaction.destination?.pocket?.toLowerCase().includes(filterText) ||
+            String(transaction.value).includes(filterText) ||
+            transaction.dateText?.includes(filterText);
+
+          if (isFiltered) {
+            someFiltered = true;
+            filteredPage.push(transaction);
+
+            if (lastDate != transaction.dateText) {
+              transaction.isLastOfDay = true;
+              lastDate = transaction.dateText;
+            }
+          }
+          
+          return filteredPage.length == this.pageSize;
+        });
+
+        emptyPages = someFiltered ? 0 : emptyPages + 1;
+        return filteredPage;
+      }),
+      last()
+    );
   }
 
 }

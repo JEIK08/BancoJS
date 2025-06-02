@@ -20,4 +20,7 @@ export interface Transaction {
     isActive: boolean;
     pocket?: string;
   }
+
+  dateText?: string;
+  isLastOfDay?: boolean;
 }
