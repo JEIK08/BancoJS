@@ -11,7 +11,7 @@ import { TransactionType, Transaction } from '../../interfaces/transaction';
 @Injectable()
 export class TransactionsService {
 
-  private pageSize = 12;
+  private pageSize = 15;
   private lastPageDate?: Transaction['date'];
 
   constructor(private firestoreService: FirestoreService) { }
@@ -141,6 +141,14 @@ export class TransactionsService {
     const filteredPage: Transaction[] = [];
 
     filterText = filterText?.toLowerCase();
+    if (new RegExp('\\d{2}/\\d{2}/\\d{2}').test(filterText)) {
+      if (!lastDate) {
+        const [day, month, year] = filterText.split('/')
+        lastDate = 'xxx';
+        this.lastPageDate = new Date(Number(year), Number(month) - 1, Number(day) + 1);
+      }
+      filterText = '';
+    }
 
     return this.firestoreService.getDocuments<Transaction>(
       Collection.Transaction,
