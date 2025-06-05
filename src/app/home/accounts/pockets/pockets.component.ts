@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { ItemReorderEventDetail } from '@ionic/angular';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
@@ -70,6 +71,16 @@ export class PocketsComponent implements OnInit {
 
   deletePocket(index: number) {
     this.pockets.removeAt(index);
+  }
+
+  dragPocket({ from, to, complete }: ItemReorderEventDetail) {
+    from--;
+    to--;
+    console.log({ from, to, complete });
+    const pocket = this.pockets.at(from);
+    this.pockets.removeAt(from);
+    this.pockets.insert(to, pocket);
+    complete();
   }
 
   save() {

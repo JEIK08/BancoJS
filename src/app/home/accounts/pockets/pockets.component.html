@@ -12,39 +12,41 @@
 @if (account.isActive) {
   <ion-content [formGroup]="form">
     <ion-list>
-      <ion-item>
-        <ion-text>
-          <span>Deuda</span><br>
-          <small class="red">{{ form.value.debt | currency:'':'$ ':'1.2-2' }}</small>
-        </ion-text>
-        <ion-input slot="end" type="number" class="ion-text-end" formControlName="debt" />
-      </ion-item>
-      <ng-container formArrayName="pockets">
-        <ion-item formGroupName="0">
-          <ion-text>
-            <span>{{ account.pockets[0].name }}</span><br>
-            <small class="green">{{ form.value.pockets[0].value | currency:'':'$ ':'1.2-2' }}</small>
-          </ion-text>
-          <ion-input slot="end" type="number" class="ion-text-end" formControlName="value" />
-        </ion-item>
-        @for (pocket of pockets.controls; track i; let i = $index) {
-          @if (i > 0) {
-            <ion-item [formGroupName]="i">
-              <ion-input class="pocket-input" formControlName="name" [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'" />
-              <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" formControlName="value" />
-              <ion-icon
-                slot="end"
-                name="close-circle-outline"
-                class="ion-margin-start"
-                (click)="deletePocket(i)"
-              />
-            </ion-item>
-          }
-        }
+      <ion-reorder-group [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
         <ion-item>
-          <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
+          <ion-text>
+            <span>Deuda</span><br>
+            <small class="red">{{ form.value.debt | currency:'':'$ ':'1.2-2' }}</small>
+          </ion-text>
+          <ion-input slot="end" type="number" class="ion-text-end" formControlName="debt" />
         </ion-item>
-      </ng-container>
+        <ng-container formArrayName="pockets">
+          <ion-item formGroupName="0">
+            <ion-text>
+              <span>{{ account.pockets[0].name }}</span><br>
+              <small class="green">{{ form.value.pockets[0].value | currency:'':'$ ':'1.2-2' }}</small>
+            </ion-text>
+            <ion-input slot="end" type="number" class="ion-text-end" formControlName="value" />
+          </ion-item>
+          @for (pocket of pockets.controls; track i; let i = $index) {
+            @if (i > 0) {
+              <ion-item [formGroupName]="i" class="custom-pocket">
+                <ion-input
+                  class="pocket-name"
+                  formControlName="name"
+                  [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
+                />
+                <ion-input class="pocket-value" formControlName="value" slot="end" type="number" />
+                <ion-icon slot="end" name="close-circle-outline" (click)="deletePocket(i)" />
+                <ion-reorder slot="end" class="ion-margin-start"></ion-reorder>
+              </ion-item>
+            }
+          }
+          <ion-item>
+            <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
+          </ion-item>
+        </ng-container>
+      </ion-reorder-group>
     </ion-list>
   </ion-content>
 }

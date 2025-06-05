@@ -14,7 +14,7 @@
     "lint": "ng lint",
     "firebase:blank": "firebase emulators:start --only firestore,auth",
     "firebase": "firebase emulators:start --only firestore,auth --import firebase-data",
-    "firebase:save": "firebase emulators:export firebase-data",
+    "firebase:save": "firebase emulators:export firebase-data --force",
     "dev": "start cmd /k npm run firebase && ionic serve",
     "ionic": "ionic serve --no-open",
     "prod": "ionic serve --prod --no-open"

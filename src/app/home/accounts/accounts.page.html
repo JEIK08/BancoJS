@@ -10,26 +10,6 @@
 </ion-header>
 
 <ion-content>
-  <ng-template #activeTemplate let-account>
-    <ion-label>
-      <span>{{ account.name }}</span>
-      @if (account.debt) {
-        <p class="green">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p>
-      }
-    </ion-label>
-    <ion-text class="ion-text-end">
-      <span class="bold-value green">{{ account.value | currency:'':'$ ':'1.2-2' }}</span><br>
-      @if (account.debt) {
-        <small class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
-      }
-    </ion-text>
-  </ng-template>
-
-  <ng-template #pasiveTemplate let-account>
-    <ion-label>{{ account.name }}</ion-label>
-    <ion-text class="bold-value red">{{ account.value | currency:'':'$ ':'1.2-2' }}</ion-text>
-  </ng-template>
-
   @if (accounts) {
     <ion-accordion-group multiple [value]="accordeonValues">
       @for (account of accounts; track account.id) {
@@ -41,9 +21,20 @@
           (contextmenu)="selectedAccount = account"
         >
           <ion-item slot="header">
-            <ng-container
-              *ngTemplateOutlet="account.isActive ? activeTemplate : pasiveTemplate; context: { $implicit: account }">
-            </ng-container>
+            <ion-label>
+              {{ account.name }}
+              @if (account.debt) { <p class="green">{{ account.value - account.debt | currency:'':'$ ':'1.2-2' }}</p> }
+            </ion-label>
+
+            <ion-text class="ion-text-end">
+              <span class="bold-value" [ngClass]="account.isActive ? 'green' : 'red'">
+                {{ account.value | currency:'':'$ ':'1.2-2' }}
+              </span>
+              @if (account.debt) {
+                <br>
+                <small class="red">(- {{ account.debt | currency:'':'$ ':'1.2-2' }})</small>
+              }
+            </ion-text>
           </ion-item>
 
           @if (account.isActive) {

@@ -2,11 +2,24 @@
   display: contents;
 }
 
-.pocket-input {
-  min-height: inherit;
-  --border-width: 0px;
+.custom-pocket {
+  ::ng-deep .item-inner {
+    flex-wrap: nowrap;
+  }
 
-  ::ng-deep .helper-text {
-    color: var(--ion-color-success) !important;
+  .pocket-name {
+    --border-width: 0px;
+
+    width: 150px;
+    min-height: inherit;
+
+    ::ng-deep .helper-text {
+      color: var(--ion-color-success) !important;
+    }
+  }
+
+  .pocket-value {
+    width: 84px;
+    text-align: end;
   }
 }

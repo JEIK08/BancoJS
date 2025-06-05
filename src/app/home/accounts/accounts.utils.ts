@@ -1,4 +1,4 @@
-import { CurrencyPipe, NgTemplateOutlet } from '@angular/common';
+import { CurrencyPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 
 import {
   IonAccordion,
@@ -25,6 +25,7 @@ import { PocketsComponent } from './pockets/pockets.component';
 
 export const IMPORTS = [
   CurrencyPipe,
+  NgClass,
   NgTemplateOutlet,
   IonAccordion,
   IonAccordionGroup,
