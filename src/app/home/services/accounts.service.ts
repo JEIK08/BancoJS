@@ -44,8 +44,8 @@ export class AccountService {
     return this.firestoreService.addDocument(Collection.Account, accountData);
   }
 
-  updateAccount(accountId: string, name: string, debt: number, pockets: Pocket[]) {
-    return this.firestoreService.updateDocument<Account>(Collection.Account, accountId, { name, debt, pockets });
+  updateAccount(accountId: string, accountData: Partial<Pick<Account, 'name' | 'debt' | 'pockets'>>) {
+    return this.firestoreService.updateDocument<Account>(Collection.Account, accountId, accountData);
   }
 
 }

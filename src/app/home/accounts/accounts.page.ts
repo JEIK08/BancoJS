@@ -33,9 +33,4 @@ export default class AccountsPage {
     });
   }
 
-  selectAccount(account: Account) {
-    if (!account.isActive) return;
-    this.selectedAccount = account;
-  }
-
 }

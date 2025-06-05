@@ -1,5 +1,5 @@
-import { CurrencyPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { CurrencyPipe, NgClass } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import {
   IonButton,
@@ -22,8 +22,9 @@ import { addIcons } from 'ionicons';
 import { closeCircleOutline, addCircleOutline } from 'ionicons/icons';
 
 export const IMPORTS = [
-  FormsModule,
   CurrencyPipe,
+  NgClass,
+  ReactiveFormsModule,
   IonButton,
   IonCol,
   IonContent,

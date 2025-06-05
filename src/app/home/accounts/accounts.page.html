@@ -38,7 +38,7 @@
           [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
           [readonly]="!account.isActive"
           [value]="account.id"
-          (contextmenu)="selectAccount(account)"
+          (contextmenu)="selectedAccount = account"
         >
           <ion-item slot="header">
             <ng-container

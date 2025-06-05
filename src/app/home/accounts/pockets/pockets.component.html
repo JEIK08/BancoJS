@@ -1,62 +1,70 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar [formGroup]="form">
     <ion-title>
-      <ion-input type="text" [(ngModel)]="accountName" />
+      <ion-input type="text" formControlName="name" />
     </ion-title>
-    <ion-text slot="end" class="ion-padding-end" class="ion-padding-end bold-value green">
+    <ion-text slot="end" class="ion-padding-end bold-value" [ngClass]="account.isActive ? 'green' : 'red'">
       {{ account.value | currency:'':'$ ':'1.2-2' }}
     </ion-text>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-text>
-        <span>Deuda</span><br>
-        <small class="red">{{ debt | currency:'':'$ ':'1.2-2' }}</small>
-      </ion-text>
-      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="debt" (ngModelChange)="setTotal()" />
-    </ion-item>
-    <ion-item>
-      <ion-text>
-        <span>{{ account.pockets[0].name }}</span><br>
-        <small class="green">{{ available | currency:'':'$ ':'1.2-2' }}</small>
-      </ion-text>
-      <ion-input slot="end" type="number" class="ion-text-end" [(ngModel)]="available" (ngModelChange)="setTotal()" />
-    </ion-item>
-    @for (pocket of pockets; track i; let i = $index) {
-      <ion-item>
-        <ion-input class="pocket-input" [helperText]="pocket.value | currency:'':'$ ':'1.2-2'" [(ngModel)]="pocket.name" />
-        <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" [(ngModel)]="pocket.value" (ngModelChange)="setTotal()" />
-        <ion-icon
-          slot="end"
-          name="close-circle-outline"
-          class="ion-margin-start"
-          (click)="deletePocket(i)">
-        </ion-icon>
-      </ion-item>
-    }
-    <ion-item>
-      <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="pockets.push({ name: '', value: 0 })" />
-    </ion-item>
-  </ion-list>
-</ion-content>
-
-<ion-footer>
-  <ion-toolbar>
+@if (account.isActive) {
+  <ion-content [formGroup]="form">
     <ion-list>
       <ion-item>
-        <ion-text slot="start">
-          <span class="ion-margin-end">Total</span>
-          <span class="bold-value green" style="user-select: text">
-            {{ total | currency:'':'$ ':'1.2-2' }} ({{ account.value - total | currency:'':'$ ':'1.2-2' }})
-          </span>
+        <ion-text>
+          <span>Deuda</span><br>
+          <small class="red">{{ form.value.debt | currency:'':'$ ':'1.2-2' }}</small>
         </ion-text>
+        <ion-input slot="end" type="number" class="ion-text-end" formControlName="debt" />
       </ion-item>
+      <ng-container formArrayName="pockets">
+        <ion-item formGroupName="0">
+          <ion-text>
+            <span>{{ account.pockets[0].name }}</span><br>
+            <small class="green">{{ form.value.pockets[0].value | currency:'':'$ ':'1.2-2' }}</small>
+          </ion-text>
+          <ion-input slot="end" type="number" class="ion-text-end" formControlName="value" />
+        </ion-item>
+        @for (pocket of pockets.controls; track i; let i = $index) {
+          @if (i > 0) {
+            <ion-item [formGroupName]="i">
+              <ion-input class="pocket-input" formControlName="name" [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'" />
+              <ion-input slot="end" type="number" class="ion-text-end" style="width: 23%;" formControlName="value" />
+              <ion-icon
+                slot="end"
+                name="close-circle-outline"
+                class="ion-margin-start"
+                (click)="deletePocket(i)"
+              />
+            </ion-item>
+          }
+        }
+        <ion-item>
+          <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
+        </ion-item>
+      </ng-container>
     </ion-list>
-  </ion-toolbar>
-</ion-footer>
+  </ion-content>
+}
+
+@if (account.isActive) {
+  <ion-footer>
+    <ion-toolbar>
+      <ion-list>
+        <ion-item>
+          <ion-text slot="start">
+            <span class="ion-margin-end">Total</span>
+            <span class="bold-value green" style="user-select: text">
+              {{ total | currency:'':'$ ':'1.2-2' }} ({{ account.value - total | currency:'':'$ ':'1.2-2' }})
+            </span>
+          </ion-text>
+        </ion-item>
+      </ion-list>
+    </ion-toolbar>
+  </ion-footer>
+}
 <ion-footer>
   <ion-toolbar>
     <ion-grid>
@@ -65,7 +73,7 @@
           <ion-button expand="block" color="medium" (click)="closeModal.emit()">Cancelar</ion-button>
         </ion-col>
         <ion-col>
-          <ion-button expand="block" type="submit" [disabled]="isLoading" (click)="save()">
+          <ion-button expand="block" type="submit" [disabled]="form.invalid || isLoading" (click)="save()">
             @if (isLoading) { <ion-spinner /> }
             Aceptar
           </ion-button>

@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-
-import { ToastController } from '@ionic/angular';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
-import { Account, Pocket } from 'src/app/interfaces/account';
+import { Account } from 'src/app/interfaces/account';
 import { IMPORTS, addComponentIcons } from './pockets.utils';
 
 @Component({
@@ -20,64 +19,66 @@ export class PocketsComponent implements OnInit {
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
   public accountName!: string;
-  public pockets!: Pocket[];
-  public available!: number;
-  public debt!: number;
-  public total!: number;
+  public total = 0;
   public isLoading: boolean = false;
+
+  public form!: FormGroup;
+  public pockets!: FormArray<FormGroup>;
 
   constructor(
     private accountService: AccountService,
-    private toastController: ToastController
+    private formBuilder: FormBuilder,
   ) {
+    setTimeout(() => {
+      (window as any).comp = this;
+      (window as any).form = this.form;
+    });
     addComponentIcons();
   }
 
   ngOnInit() {
-    this.accountName = this.account.name;
-    this.available = this.account.pockets[0].value;
-    this.debt = this.account.debt;
-    this.pockets = JSON.parse(JSON.stringify(this.account.pockets.slice(1)));
-    this.setTotal();
+    this.form = this.formBuilder.group({ name: [this.account.name, Validators.required] });
+
+    if (this.account.isActive) {
+      this.pockets = this.formBuilder.array<FormGroup>([]);
+      this.form.addControl('debt', this.formBuilder.control(0, this.isNumber as ValidatorFn));
+      this.form.addControl('pockets', this.pockets);
+      this.account.pockets.forEach(() => this.addPocket());
+      this.form.setValidators(() => this.validatePockets());
+    }
+    this.form.reset(this.account);
+  }
+
+  validatePockets() {
+    this.total = this.pockets.controls.reduce(
+      (total, pocket) => total + pocket.get('value')!.value,
+      this.form.get('debt')!.value as number
+    );
+    this.total = Math.round(this.total * 100) / 100;
+    return this.total === this.account.value ? null : { noTotal: true };
+  }
+
+  addPocket() {
+    this.pockets.push(
+      this.formBuilder.group({ name: ['', Validators.required], value: [0, this.isNumber] })
+    );
+  }
+
+  isNumber(control: FormControl) {
+    return typeof control.value === 'number' ? null : { notNumber: true };
   }
 
   deletePocket(index: number) {
-    this.pockets.splice(index, 1);
-    this.setTotal();
-  }
-
-  setTotal() {
-    this.total = this.pockets.reduce((total, pocket) => total + pocket.value, this.debt + this.available);
-    this.total = Math.round(this.total * 100) / 100;
+    this.pockets.removeAt(index);
   }
 
   save() {
-    if (!this.accountName) {
-      this.toastController.create({
-        message: 'Ingrese un nombre para la cuenta',
-        duration: 3000
-      }).then(toast => toast.present());
-      return;
+    if (this.form.pristine) {
+      this.closeModal.emit();
+    } else {
+      this.isLoading = true;
+      this.accountService.updateAccount(this.account.id, this.form.value).subscribe(() => this.closeModal.emit());
     }
-
-    if (this.total !== this.account.value) {
-      this.toastController.create({
-        message: 'La suma de los valores de los bolsillos debe ser igual al valor de la cuenta',
-        duration: 3000
-      }).then(toast => toast.present());
-      return;
-    }
-
-    this.isLoading = true;
-    if (this.account.isActive) {
-      this.account.debt;
-    }
-    this.accountService.updateAccount(
-      this.account.id,
-      this.accountName,
-      this.debt,
-      [{ name: this.account.pockets[0].name, value: this.available }, ...this.pockets]
-    ).subscribe(() => this.closeModal.emit());
   }
 
 }
