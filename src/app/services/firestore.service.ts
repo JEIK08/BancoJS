@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, map, finalize, Subject } from 'rxjs';
+import { Observable, from, map, finalize, Subject, switchMap } from 'rxjs';
 
 import {
   Firestore,
@@ -12,7 +12,8 @@ import {
   addDoc,
   updateDoc,
   Timestamp,
-  QueryConstraint
+  QueryConstraint,
+  deleteField
 } from '@angular/fire/firestore';
 
 export enum Collection {
@@ -105,6 +106,11 @@ export class FirestoreService {
 
   updateDocument<T>(collectionName: Collection, id: string, data: Partial<T>) {
     return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
+  }
+  
+  setDocument<T>(collectionName: Collection, id: string, data: any) {
+    // data.debt = deleteField();
+    // return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
   }
 
   mapDate(date: any) {

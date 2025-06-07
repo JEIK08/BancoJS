@@ -24,9 +24,9 @@ export class TransactionsService {
     const type: TransactionType = data.type;
     const value: number = data.value;
     const origin: Account = data.origin.account;
-    const originPocket: Pocket = data.origin.pocket;
-    const destination: Account = data.destination.account;
-    const destinationPocket: Pocket = data.destination.pocket;
+    const originPocket: Pocket | undefined = data.origin.pocket;
+    const destination: Account | undefined = data.destination?.account;
+    const destinationPocket: Pocket | undefined = data.destination?.pocket;
 
     const transaction: Transaction = {
       description: data.description,
@@ -38,101 +38,68 @@ export class TransactionsService {
         isActive: origin.isActive
       }
     } as Transaction;
-    if (destination) {
-      transaction.destination = { name: destination.name, isActive: destination.isActive };
-      if (destination.isActive) transaction.destination.pocket = destinationPocket.name;
-    }
 
-    const observables: Observable<any>[] = [];
+    const originBody: Partial<Account> = {};
 
     if (origin.isActive) {
-      let accountValue: number = origin.value;
-      let accountDebt: number = origin.debt;
-      switch (type) {
-        case TransactionType.IN:
-          transaction.account.pocket = originPocket.name;
-          originPocket.value += value;
-          accountValue = accountValue + value;
-          break;
+      const pocket = originPocket as Pocket;
+      transaction.account.pocket = pocket.name;
 
-        case TransactionType.OUT:
-          transaction.account.pocket = originPocket.name;
-          originPocket.value -= value;
-          accountValue = accountValue - value;
-          break;
+      if (type === TransactionType.IN) {
+        pocket.value += value;
+        origin.value += value;
+      } else {
+        pocket.value -= value;
+        origin.value -= value;
+      }
 
-        case TransactionType.TRANSFER:
-          if (originPocket as any === 0) {
-            transaction.account.pocket = 'Deuda';
-            accountDebt -= value;
-          } else {
-            transaction.account.pocket = originPocket.name;
-            originPocket.value -= value;
-          }
-          accountValue -= value;
-          break;
-      }
-      if (originPocket as any != 0) originPocket.value = Math.round(originPocket.value * 100) / 100;
-      observables.push(
-        this.firestoreService.updateDocument<Account>(Collection.Account, origin.id, {
-          value: Math.round(accountValue * 100) / 100,
-          pockets: origin.pockets,
-          debt: Math.round(accountDebt * 100) / 100
-        })
-      );
-      if (type == TransactionType.TRANSFER) {
-        if (destination.isActive) {
-          destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
-          observables.push(
-            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: Math.round((destination.value + value) * 100) / 100,
-              pockets: destination.pockets
-            })
-          );
-        } else {
-          observables.push(
-            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: Math.round((destination.value - value) * 100) / 100
-            })
-          );
-        }
-      }
+      pocket.value = Math.round(pocket.value * 100) / 100;
+      originBody.pockets = origin.pockets;
     } else {
-      observables.push(
-        this.firestoreService.updateDocument<Account>(Collection.Account, origin.id, {
-          value: Math.round((origin.value + (type == TransactionType.IN ? -value : value)) * 100) / 100
-        })
-      );
-      if (type == TransactionType.OUT) {
-        destinationPocket.value = Math.round((destinationPocket.value - value) * 100) / 100;
-        observables.push(
-          this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
-            debt: Math.round((destination.debt + value) * 100) / 100,
-            pockets: destination.pockets
-          })
-        );
-      }
-      if (type == TransactionType.TRANSFER) {
-        if (destination.isActive) {
-          destinationPocket.value = Math.round((destinationPocket.value + value) * 100) / 100;
-          observables.push(
-            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: Math.round((destination.value + value) * 100) / 100,
-              pockets: destination.pockets
-            })
-          );
-        } else {
-          observables.push(
-            this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, {
-              value: Math.round((destination.value - value) * 100) / 100
-            })
-          );
-        }
-      }
+      if (type === TransactionType.IN) origin.value -= value;
+      else origin.value += value;
     }
 
-    observables.push(this.firestoreService.addDocument(Collection.Transaction, transaction));
-    return forkJoin(observables);
+    origin.value = Math.round(origin.value * 100) / 100;
+    originBody.value = origin.value;
+
+    const requests$: Observable<any>[] = [
+      this.firestoreService.updateDocument<Account>(Collection.Account, origin.id, originBody)
+    ];
+
+    if (destination) {
+      const destinationBody: Partial<Account> = {};
+      transaction.destination = { name: destination.name, isActive: destination.isActive };
+
+      if (destination.isActive) {
+        const pocket = destinationPocket as Pocket;
+        transaction.destination.pocket = pocket.name;
+
+        if (type === TransactionType.OUT) {
+          pocket.value -= value;
+          destination.pockets[0].value += value;
+        } else {
+          pocket.value += value;
+          destination.value += value;
+        }
+
+        pocket.value = Math.round(pocket.value * 100) / 100;
+        destinationBody.pockets = destination.pockets;
+      } else {
+        destination.value -= value;
+      }
+
+      destination.value = Math.round(destination.value * 100) / 100;
+      destinationBody.value = destination.value;
+      
+      requests$.push(
+        this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, destinationBody)
+      );
+    }
+
+    requests$.push(this.firestoreService.addDocument(Collection.Transaction, transaction));
+    
+    return forkJoin(requests$);
   }
 
   getTransactions(filterText = '', lastDate?: Transaction['dateText']) {

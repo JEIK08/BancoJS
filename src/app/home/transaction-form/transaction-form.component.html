@@ -4,49 +4,42 @@
   </ion-toolbar>
 </ion-header>
 
-<ng-template #typeButton let-type let-color="color" let-text="text">
-  <ion-button
-    size="default"
-    expand="block"
-    [color]="color"
-    [fill]="form.value.type === type ? 'solid' : 'outline'"
-    (click)="setTransactionType(type)">
-    {{ text }}
-  </ion-button>
-</ng-template>
-
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <ion-content>
     <ion-list>
       <ion-item>
-        <ion-row style="width: 100%;">
-          <ion-col size="4">
-            <ng-container *ngTemplateOutlet="typeButton; context: { $implicit: TransactionType.OUT, color: 'danger', text: 'Gasto' }" />
-          </ion-col>
-          <ion-col size="4">
-            <ng-container *ngTemplateOutlet="typeButton; context: { $implicit: TransactionType.IN, color: 'success', text: 'Ingreso' }" />
-          </ion-col>
-          <ion-col size="4">
-            <ng-container *ngTemplateOutlet="typeButton; context: { $implicit: TransactionType.TRANSFER, color: 'primary', text: 'Transferir' }" />
-          </ion-col>
-        </ion-row>
+        <ion-segment formControlName="type">
+          <ion-segment-button [ngClass]="TransactionType.OUT" [value]="TransactionType.OUT">
+            Gasto
+          </ion-segment-button>
+          <ion-segment-button [ngClass]="TransactionType.IN" [value]="TransactionType.IN">
+            Ingreso
+          </ion-segment-button>
+          <ion-segment-button [ngClass]="TransactionType.TRANSFER" [value]="TransactionType.TRANSFER">
+            Transferir
+          </ion-segment-button>
+        </ion-segment>
       </ion-item>
+
       <ion-item>
-        <ion-input label-placement="floating" label="Descripción" formControlName="description" />
+        <ion-input
+        label-placement="floating"
+        label="Descripción"
+        autocapitalize="autocapitalize"
+        formControlName="description"
+      />
       </ion-item>
+
       <ion-item>
         <ion-input label-placement="floating" label="Valor" type="number" formControlName="value">
           @if (form.value.value) {
-            <ion-text slot="end" [color]="
-              (form.value.type === TransactionType.OUT && 'danger') ||
-              (form.value.type === TransactionType.IN && 'success') ||
-              (form.value.type === TransactionType.TRANSFER && 'primary')
-            ">
+            <ion-text slot="end" class="value" [ngClass]="form.value.type">
               {{ form.value.value | currency:'':'$ ':'1.2-2' }}
             </ion-text>
           }
         </ion-input>
       </ion-item>
+
       <ion-item button (click)="initCalendarDate()">
         <ion-icon name="calendar-outline" class="ion-margin-end" />
         <ion-text class="ion-margin-end">{{ form.value.date | date:'dd/MM/yyyy' }}</ion-text>
@@ -70,6 +63,7 @@
           </ng-template>
         </ion-modal>
       </ion-item>
+
       <ng-container formGroupName="origin">
         <ion-item>
           <ion-select label="Cuenta de origen" interface="popover" formControlName="account">
@@ -78,42 +72,39 @@
             }
           </ion-select>
         </ion-item>
-        @if (form.value.origin.account?.isActive) {
-          <ion-item>
-            <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-              @if (form.value.type === TransactionType.TRANSFER) {
-                <ion-select-option [value]="0">Deuda</ion-select-option>
-              }
-              @for (pocket of form.value.origin.account.pockets; track pocket.name) {
+
+        <ion-item *hideOnDisable="'pocket'">
+          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+            @for (pocket of form.value.origin.account?.pockets; track pocket.name; let isFirst = $first) {
+              @if (!isFirst || (isFirst && form.value.type === TransactionType.TRANSFER)) {
                 <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option>
               }
-            </ion-select>
-          </ion-item>
-        }
+            }
+          </ion-select>
+        </ion-item>
       </ng-container>
-      @if (showDestination) {
-        <ng-container formGroupName="destination">
-          <ion-item>
-            <ion-select
-              [label]="'Cuenta ' + (form.value.type === TransactionType.OUT ? 'afectada' : 'de Destino')"
-              interface="popover"
-              formControlName="account">
-              @for (account of destinationAccounts; track account.id) {
-                <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
-              }
-            </ion-select>
-          </ion-item>
-          @if (form.value.destination.account?.isActive) {
-            <ion-item>
-              <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-                @for (pocket of form.value.destination.account.pockets; track pocket.name) {
-                  <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option>
-                }
-              </ion-select>
-            </ion-item>
-          }
-        </ng-container>
-      }
+
+      <ng-container formGroupName="destination">
+        <ion-item *hideOnDisable="'account'">
+          <ion-select
+            interface="popover"
+            formControlName="account"
+            [label]="'Cuenta ' + (form.value.type === TransactionType.OUT ? 'afectada' : 'de Destino')"
+          >
+            @for (account of destinationAccounts; track account.id) {
+              <ion-select-option [value]="account">{{ account.name }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item *hideOnDisable="'pocket'">
+          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
+            @for (pocket of form.value.destination?.account.pockets; track pocket.name; let isFirst = $first) {
+              @if (!isFirst) { <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option> }
+            }
+          </ion-select>
+        </ion-item>
+      </ng-container>
     </ion-list>
   </ion-content>
 

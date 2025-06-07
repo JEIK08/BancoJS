@@ -1,10 +1,23 @@
-export interface Account<IsActive extends boolean = true> {
+export type Account = AccountData & Partial<ActiveAccount> & Partial<PassiveAccount> & (
+  ({ isActive: true } & ActiveAccount & AllUndefined<PassiveAccount>) |
+  ({ isActive: false } & PassiveAccount & AllUndefined<ActiveAccount>)
+);
+
+type AllUndefined<T> = {
+  [K in keyof T]?: undefined;
+};
+
+interface AccountData {
   id: string;
   name: string;
-  isActive: boolean;
   value: number;
-  debt: IsActive extends true ? number : undefined;
-  pockets: IsActive extends true ? Pocket[] : undefined;
+}
+
+interface ActiveAccount {
+  pockets: Pocket[];
+}
+
+interface PassiveAccount {
 }
 
 export interface Pocket {

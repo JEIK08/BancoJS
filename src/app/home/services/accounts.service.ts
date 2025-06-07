@@ -4,7 +4,7 @@ import { BehaviorSubject, concatMap, takeUntil, tap } from 'rxjs';
 import { Collection, FirestoreService } from '../../services/firestore.service';
 import { AuthService } from 'src/app/services/auth.service';
 
-import { Account, Pocket } from '../../interfaces/account';
+import { Account } from '../../interfaces/account';
 
 @Injectable()
 export class AccountService {
@@ -26,6 +26,18 @@ export class AccountService {
         )
       ),
       concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account)),
+      // tap(() => {
+      //   this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
+      //     accounts.forEach((account: any) => {
+      //       if (!account.isActive || !account.debt || account.pockets[0].name === 'Deuda') return;
+      //       const id = account.id;
+      //       delete account.id;
+      //       account.pockets.unshift({ name: 'Deuda', value: account.debt });
+      //       delete account.debt;
+      //       this.firestoreService.setDocument(Collection.Account, id, account).subscribe();
+      //     });
+      //   });
+      // })
     ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
@@ -37,14 +49,14 @@ export class AccountService {
     const account: Account = accountData;
     account.value = 0;
     if (pockets) {
-      account.debt = 0;
       account.pockets = pockets.map(pocket => ({ name: pocket, value: 0 }));
       account.pockets.unshift({ name: 'Disponible', value: 0 });
+      account.pockets.unshift({ name: 'Deuda', value: 0 });
     }
     return this.firestoreService.addDocument(Collection.Account, accountData);
   }
 
-  updateAccount(accountId: string, accountData: Partial<Pick<Account, 'name' | 'debt' | 'pockets'>>) {
+  updateAccount(accountId: string, accountData: Pick<Account, 'name' | 'pockets'>) {
     return this.firestoreService.updateDocument<Account>(Collection.Account, accountId, accountData);
   }
 

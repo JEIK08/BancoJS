@@ -1,6 +1,8 @@
 import { CurrencyPipe, DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { HideOnDisableDirective } from '../directives/hide-on-disable.directive';
+
 import {
   IonButton,
   IonCol,
@@ -11,17 +13,21 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonModal,
   IonRow,
+  IonSegment,
+  IonSegmentButton,
   IonSelect,
   IonSelectOption,
   IonSpinner,
   IonText,
   IonTitle,
   IonToast,
-  IonToolbar
+  IonToolbar,
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
 import { calendarOutline, timeOutline } from 'ionicons/icons';
 
@@ -33,6 +39,8 @@ export const IMPORTS = [
   NgClass,
   NgTemplateOutlet,
 
+  HideOnDisableDirective,
+
   IonButton,
   IonCol,
   IonContent,
@@ -42,9 +50,12 @@ export const IMPORTS = [
   IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonModal,
   IonRow,
+  IonSegment,
+  IonSegmentButton,
   IonSelect,
   IonSelectOption,
   IonSpinner,

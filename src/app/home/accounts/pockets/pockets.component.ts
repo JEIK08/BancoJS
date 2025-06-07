@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ItemReorderEventDetail } from '@ionic/angular';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
 import { Account } from 'src/app/interfaces/account';
 import { IMPORTS, addComponentIcons } from './pockets.utils';
+import { IsNumber } from '../../validators/validators';
 
 @Component({
   selector: 'app-pockets',
@@ -30,10 +31,6 @@ export class PocketsComponent implements OnInit {
     private accountService: AccountService,
     private formBuilder: FormBuilder,
   ) {
-    setTimeout(() => {
-      (window as any).comp = this;
-      (window as any).form = this.form;
-    });
     addComponentIcons();
   }
 
@@ -42,7 +39,7 @@ export class PocketsComponent implements OnInit {
 
     if (this.account.isActive) {
       this.pockets = this.formBuilder.array<FormGroup>([]);
-      this.form.addControl('debt', this.formBuilder.control(0, this.isNumber as ValidatorFn));
+      this.form.addControl('debt', this.formBuilder.control(0, IsNumber));
       this.form.addControl('pockets', this.pockets);
       this.account.pockets.forEach(() => this.addPocket());
       this.form.setValidators(() => this.validatePockets());
@@ -61,12 +58,8 @@ export class PocketsComponent implements OnInit {
 
   addPocket() {
     this.pockets.push(
-      this.formBuilder.group({ name: ['', Validators.required], value: [0, this.isNumber] })
+      this.formBuilder.group({ name: ['', Validators.required], value: [0, IsNumber] })
     );
-  }
-
-  isNumber(control: FormControl) {
-    return typeof control.value === 'number' ? null : { notNumber: true };
   }
 
   deletePocket(index: number) {

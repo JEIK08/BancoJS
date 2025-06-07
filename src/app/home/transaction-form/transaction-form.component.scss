@@ -10,3 +10,39 @@ ion-modal {
 ion-datetime {
   margin: 0px auto;
 }
+
+ion-segment-button {
+  --color-checked: white;
+  --border-radius: 4px;
+  --indicator-height: 0;
+
+  &.IN {
+    --background-checked: var(--ion-color-success);
+    --color: var(--ion-color-success);
+  }
+  
+  &.OUT {
+    --background-checked: var(--ion-color-danger);
+    --color: var(--ion-color-danger);
+  }
+  
+  &.TRANSFER {
+    --background-checked: var(--ion-color-primary);
+    --color: var(--ion-color-primary);
+  }
+
+}
+
+.value {
+  &.IN {
+    color: var(--ion-color-success);
+  }
+
+  &.OUT {
+    color: var(--ion-color-danger);
+  }
+
+  &.TRANSFER {
+    color: var(--ion-color-primary);
+  }
+}
