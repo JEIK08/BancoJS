@@ -1,5 +1,5 @@
-import { CurrencyPipe, DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { HideOnDisableDirective } from '../directives/hide-on-disable.directive';
 
@@ -33,12 +33,10 @@ import { addIcons } from 'ionicons';
 import { calendarOutline, timeOutline } from 'ionicons/icons';
 
 export const IMPORTS = [
-  FormsModule,
   ReactiveFormsModule,
   CurrencyPipe,
   DatePipe,
   NgClass,
-  NgTemplateOutlet,
 
   HideOnDisableDirective,
 

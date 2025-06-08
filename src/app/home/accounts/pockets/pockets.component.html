@@ -1,55 +1,57 @@
-<ion-header>
-  <ion-toolbar [formGroup]="form">
-    <ion-title>
-      <ion-input type="text" autocapitalize="sentences" formControlName="name" />
-    </ion-title>
-    <ion-text slot="end" class="ion-margin-end bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
-      {{ account.value | currency:'':'$ ':'1.2-2' }}
-    </ion-text>
-  </ion-toolbar>
-</ion-header>
-
-@if (account.isActive) {
-  <ion-content [formGroup]="form">
-    <ion-list>
-      <ion-reorder-group formArrayName="pockets" [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
-        @for (pocket of pockets.controls; track pocket; let i = $index) {
-          <ion-item [formGroupName]="i" class="custom-pocket">
-            <ion-input
-              class="pocket-name"
-              autocapitalize="sentences"
-              formControlName="name"
-              [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
-            />
-            <ion-input class="pocket-value" formControlName="value" slot="end" type="number" />
-            @if (i >= 2) {
-              <ion-icon slot="end" name="close-circle-outline" (click)="deletePocket(i)" />
-              <ion-reorder slot="end" class="ion-margin-start" />
-            }
-          </ion-item>
-        }
-        <ion-item>
-          <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
-        </ion-item>
-      </ion-reorder-group>
-    </ion-list>
-  </ion-content>
-
-  <ion-footer>
-    <ion-toolbar>
-      <ion-list>
-        <ion-item>
-          <ion-text slot="start">
-            <span class="ion-margin-end">Total</span>
-            <span class="bold-value color-value IN" style="user-select: text">
-              {{ total | currency:'':'$ ':'1.2-2' }} ({{ account.value - total | currency:'':'$ ':'1.2-2' }})
-            </span>
-          </ion-text>
-        </ion-item>
-      </ion-list>
+<form [formGroup]="form">
+  <ion-header>
+    <ion-toolbar >
+      <ion-title>
+        <ion-input type="text" autocapitalize="sentences" formControlName="name" />
+      </ion-title>
+      <ion-text slot="end" class="ion-margin-end bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
+        {{ account.value | currency:'':'$ ':'1.2-2' }}
+      </ion-text>
     </ion-toolbar>
-  </ion-footer>
-}
+  </ion-header>
+
+  @if (account.isActive) {
+    <ion-content>
+      <ion-list>
+        <ion-reorder-group formArrayName="pockets" [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
+          @for (pocket of pockets.controls; track pocket; let i = $index) {
+            <ion-item [formGroupName]="i" class="custom-pocket">
+              <ion-input
+                class="pocket-name"
+                autocapitalize="sentences"
+                formControlName="name"
+                [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
+              />
+              <ion-input class="pocket-value" formControlName="value" slot="end" type="number" />
+              @if (i >= 2) {
+                <ion-icon slot="end" name="close-circle-outline" (click)="deletePocket(i)" />
+                <ion-reorder slot="end" class="ion-margin-start" />
+              }
+            </ion-item>
+          }
+          <ion-item>
+            <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
+          </ion-item>
+        </ion-reorder-group>
+      </ion-list>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-list>
+          <ion-item>
+            <ion-text slot="start">
+              <span class="ion-margin-end">Total</span>
+              <span class="bold-value color-value IN" style="user-select: text">
+                {{ total | currency:'':'$ ':'1.2-2' }} ({{ account.value - total | currency:'':'$ ':'1.2-2' }})
+              </span>
+            </ion-text>
+          </ion-item>
+        </ion-list>
+      </ion-toolbar>
+    </ion-footer>
+  }
+</form>
 
 <ion-footer>
   <ion-toolbar>

@@ -27,6 +27,7 @@ export const IMPORTS = [
   CurrencyPipe,
   NgClass,
   ReactiveFormsModule,
+
   IonButton,
   IonCol,
   IonContent,
