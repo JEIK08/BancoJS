@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, concatMap, takeUntil, tap } from 'rxjs';
+import { orderBy } from '@angular/fire/firestore';
 
 import { Collection, FirestoreService } from '../../services/firestore.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 import { Account } from '../../interfaces/account';
-import { orderBy } from '@angular/fire/firestore';
 
 @Injectable()
 export class AccountService {
@@ -26,25 +26,10 @@ export class AccountService {
           tap(() => this.accountsSubject.next(undefined))
         )
       ),
-      concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account/* , { queryConstrains: [orderBy('order', 'asc')] } */)),
-      // tap(() => {
-      //   this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
-      //     accounts.forEach((account: any, index) => {
-      //       const id = account.id;
-      //       delete account.id;
-      //       if (account.isActive && 'debt' in account && account.pockets[0].name !== 'Deuda') {
-      //         account.pockets.unshift({ name: 'Deuda', value: account.debt });
-      //         delete account.debt;
-      //       }
-
-      //       if (!('order' in account)) {
-      //         account.order = index;
-      //       }
-
-      //       this.firestoreService.setDocument(Collection.Account, id, account);
-      //     });
-      //   });
-      // })
+      concatMap(() => this.firestoreService.getDocuments<Account>(
+        Collection.Account,
+        { queryConstrains: [orderBy('order', 'asc')] }
+      )),
     ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
