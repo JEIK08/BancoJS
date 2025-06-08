@@ -16,21 +16,6 @@
           <ion-select-option [value]="false">Pasiva</ion-select-option>
         </ion-select>
       </ion-item>
-      @if (form.value.isActive) {
-        <ion-item>
-          <ion-label color="primary" style="font-weight: bold">Bolsillos</ion-label>
-        </ion-item>
-        @for (pocket of pockets; track i; let i = $index) {
-          <ion-item>
-            <ion-label>{{ pocket }}</ion-label>
-            <ion-icon slot="end" name="close-outline" (click)="pockets.splice(i, 1)"></ion-icon>
-          </ion-item>
-        }
-        <ion-item>
-          <ion-input label="Nombre" label-placement="floating" [ngModelOptions]="{standalone: true}" [(ngModel)]="pocketName"></ion-input>
-          <ion-icon slot="end" name="add-circle-outline" (click)="addPocket()"></ion-icon>
-        </ion-item>
-      }
     </ion-list>
   </ion-content>
 

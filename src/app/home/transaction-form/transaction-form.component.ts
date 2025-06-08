@@ -7,7 +7,7 @@ import { TransactionsService } from 'src/app/home/services/transactions.service'
 
 import { Account, Pocket } from 'src/app/interfaces/account';
 import { TransactionType } from 'src/app/interfaces/transaction';
-import { IMPORTS, addComponentIcons } from './transaction-forn.utils';
+import { IMPORTS, addComponentIcons } from './transaction-form.utils';
 import { IsNumber } from '../validators/validators';
 
 @Component({
@@ -25,6 +25,7 @@ export class TransactionFormComponent implements OnDestroy {
   public accounts?: Account[];
   public calendarInitialDate?: string;
   public timeZoneOffset: number = (new Date()).getTimezoneOffset() * 60 * 1000;
+  public filteredPockets?: Pocket[];
   public destinationAccounts?: Account[];
   public showToast: boolean = false;
   public isLoading: boolean = false;
@@ -135,6 +136,23 @@ export class TransactionFormComponent implements OnDestroy {
 
   setDate(event: any) {
     this.form.get('date')!.setValue(new Date(event.detail.value));
+  }
+
+  filterPockets(filter: string, isOrigin: boolean) {
+    this.filteredPockets = isOrigin ? this.form.value.origin.account.pockets : this.form.value.destination.account.pockets;
+    this.filteredPockets = isOrigin && this.form.value.type === TransactionType.TRANSFER
+      ? this.filteredPockets
+      : this.filteredPockets!.slice(1);
+    if (!filter) return;
+    filter = filter.toLowerCase();
+    this.filteredPockets = this.filteredPockets!.filter(({ name }) => name.toLowerCase().includes(filter));
+  }
+
+  selectPocket(controlRoute: string, pocket: Pocket) {
+    const control = this.form.get(controlRoute) as FormControl;
+    control.setValue(pocket);
+    control.markAsDirty();
+    control.markAsTouched();
   }
 
   onSubmit() {

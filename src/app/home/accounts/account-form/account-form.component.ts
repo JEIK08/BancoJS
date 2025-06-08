@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
-import { IMPORTS, addComponentIcons } from './account.form.utils';
+import { IMPORTS } from './account.form.utils';
 
 @Component({
   selector: 'app-account-form',
@@ -17,34 +17,21 @@ export class AccountFormComponent {
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
   public form: FormGroup;
-  public pocketName: string = '';
-  public pockets: string[] = [];
   public isLoading: boolean = false;
 
   constructor(
     private accountService: AccountService,
     private formBuilder: FormBuilder
   ) {
-    addComponentIcons();
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       isActive: [true]
     });
   }
 
-  addPocket() {
-    this.pocketName = this.pocketName.trim();
-    if (!this.pocketName) return;
-    this.pockets.push(this.pocketName);
-    this.pocketName = '';
-  }
-
   onSubmit() {
     this.isLoading = true;
-    this.accountService.createAccount(
-      this.form.value,
-      this.form.value.isActive ? this.pockets : null
-    ).subscribe(() => this.closeModal.emit());
+    this.accountService.createAccount(this.form.value).subscribe(() => this.closeModal.emit());
   }
 
 }

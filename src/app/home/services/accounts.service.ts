@@ -26,26 +26,26 @@ export class AccountService {
           tap(() => this.accountsSubject.next(undefined))
         )
       ),
-      // , { queryConstrains: [orderBy('order', 'asc')] }
-      concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account)),
-      tap(() => {
-        this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
-          accounts.forEach((account: any, index) => {
-            const id = account.id;
-            if (account.isActive && 'debt' in account && account.pockets[0].name !== 'Deuda') {
-              delete account.id;
-              account.pockets.unshift({ name: 'Deuda', value: account.debt });
-              delete account.debt;
-            }
+      
+      concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account/* , { queryConstrains: [orderBy('order', 'asc')] } */)),
+      // tap(() => {
+      //   this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
+      //     accounts.forEach((account: any, index) => {
+      //       const id = account.id;
+      //       delete account.id;
+      //       if (account.isActive && 'debt' in account && account.pockets[0].name !== 'Deuda') {
+      //         account.pockets.unshift({ name: 'Deuda', value: account.debt });
+      //         delete account.debt;
+      //       }
 
-            if (!('order' in account)) {
-              account.order = index;
-            }
+      //       if (!('order' in account)) {
+      //         account.order = index;
+      //       }
 
-            this.firestoreService.setDocument(Collection.Account, id, account);
-          });
-        });
-      })
+      //       this.firestoreService.setDocument(Collection.Account, id, account);
+      //     });
+      //   });
+      // })
     ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
@@ -53,15 +53,15 @@ export class AccountService {
     return this.accountsSubject;
   }
 
-  createAccount(accountData: any, pockets: string[] | null) {
-    const account: Account = accountData;
-    account.value = 0;
-    if (pockets) {
-      account.pockets = pockets.map(pocket => ({ name: pocket, value: 0 }));
-      account.pockets.unshift({ name: 'Disponible', value: 0 });
-      account.pockets.unshift({ name: 'Deuda', value: 0 });
-    }
-    return this.firestoreService.addDocument(Collection.Account, accountData);
+  createAccount({ name, isActive }: Pick<Account, 'name' | 'isActive'>) {
+    const account: Partial<Account> = {
+      name,
+      isActive,
+      value: 0,
+      order: this.accountsSubject.value?.length
+    };
+    if (isActive) account.pockets = [{ name: 'Deuda', value: 0 }, { name: 'Disponible', value: 0 }];
+    return this.firestoreService.addDocument(Collection.Account, account);
   }
 
   updateAccount(accountId: string, accountData: Partial<Account>) {

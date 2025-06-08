@@ -47,8 +47,8 @@
         <ion-text>{{ form.value.date | date:'hh:mm a' }}</ion-text>
         <ion-modal
           [isOpen]="!!calendarInitialDate"
-          [initialBreakpoint]="1"
-          [breakpoints]="[0, 1]"
+          [initialBreakpoint]="0.75"
+          [breakpoints]="[0.75, 1]"
           (didDismiss)="calendarInitialDate = undefined">
           <ng-template>
             <ion-datetime
@@ -73,14 +73,25 @@
           </ion-select>
         </ion-item>
 
-        <ion-item *hideOnDisable="'pocket'">
-          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-            @for (pocket of form.value.origin.account?.pockets; track pocket.name; let isFirst = $first) {
-              @if (!isFirst || (isFirst && form.value.type === TransactionType.TRANSFER)) {
-                <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option>
-              }
-            }
-          </ion-select>
+        <ion-item *hideOnDisable="'pocket'" button detail (click)="originPockets.present(); filterPockets('', true)">
+          <ion-label>Bolsillo</ion-label>
+          @if (form.value.origin.pocket; as pocket) {
+            <ion-label slot="end" class="ion-text-end">{{ pocket.name }}</ion-label>
+          }
+          <ion-modal #originPockets [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]">
+            <ng-template>
+              <ion-content>
+                <ion-searchbar (ionInput)="filterPockets($event.detail.value ?? '', true)" />
+                <ion-list>
+                  @for (pocket of filteredPockets; track pocket.name) {
+                    <ion-item button detail (click)="selectPocket('origin.pocket', pocket); originPockets.dismiss()">
+                      {{ pocket.name }}
+                    </ion-item>
+                  }
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
         </ion-item>
       </ng-container>
 
@@ -97,12 +108,25 @@
           </ion-select>
         </ion-item>
 
-        <ion-item *hideOnDisable="'pocket'">
-          <ion-select label="Bolsillo" interface="popover" formControlName="pocket">
-            @for (pocket of form.value.destination?.account.pockets; track pocket.name; let isFirst = $first) {
-              @if (!isFirst) { <ion-select-option [value]="pocket">{{ pocket.name }}</ion-select-option> }
-            }
-          </ion-select>
+        <ion-item *hideOnDisable="'pocket'" button detail (click)="destinationPockets.present(); filterPockets('', false)">
+          <ion-label>Bolsillo</ion-label>
+          @if (form.value.destination.pocket; as pocket) {
+            <ion-label slot="end" class="ion-text-end">{{ pocket.name }}</ion-label>
+          }
+          <ion-modal #destinationPockets [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]">
+            <ng-template>
+              <ion-content>
+                <ion-searchbar (ionInput)="filterPockets($event.detail.value ?? '', false)" />
+                <ion-list>
+                  @for (pocket of filteredPockets; track pocket.name) {
+                    <ion-item button detail (click)="selectPocket('destination.pocket', pocket); destinationPockets.dismiss()">
+                      {{ pocket.name }}
+                    </ion-item>
+                  }
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
         </ion-item>
       </ng-container>
     </ion-list>
