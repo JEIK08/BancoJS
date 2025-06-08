@@ -157,7 +157,7 @@ export class TransactionFormComponent implements OnDestroy {
 
   onSubmit() {
     const formValue = this.form.value;
-    if (formValue.type == TransactionType.TRANSFER && formValue.origin.account === formValue.destination?.account) {
+    if (formValue.origin.pocket && formValue.origin.pocket === formValue.destination?.pocket) {
       this.showToast = true;
       return;
     }

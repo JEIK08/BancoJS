@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, expand, forkJoin, last, map } from 'rxjs';
+import { EMPTY, Observable, concatMap, expand, from, last, map, takeLast } from 'rxjs';
 
 import { QueryConstraint, limit, orderBy, startAfter } from '@angular/fire/firestore';
 
@@ -98,7 +98,7 @@ export class TransactionsService {
 
     requests$.push(this.firestoreService.addDocument(Collection.Transaction, transaction));
     
-    return forkJoin(requests$);
+    return from(requests$).pipe(concatMap(req$ => req$), takeLast(1));
   }
 
   getTransactions(filterText = '', lastDate?: Transaction['dateText']) {
