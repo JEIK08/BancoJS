@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar [formGroup]="form">
     <ion-title>
-      <ion-input type="text" formControlName="name" />
+      <ion-input type="text" autocapitalize="sentences" formControlName="name" />
     </ion-title>
     <ion-text slot="end" class="ion-margin-end bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
       {{ account.value | currency:'':'$ ':'1.2-2' }}
@@ -17,6 +17,7 @@
           <ion-item [formGroupName]="i" class="custom-pocket">
             <ion-input
               class="pocket-name"
+              autocapitalize="sentences"
               formControlName="name"
               [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
             />

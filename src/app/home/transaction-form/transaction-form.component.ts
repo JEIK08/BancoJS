@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, DestroyRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, combineLatest, filter, map, pairwise, startWith, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, pairwise, startWith } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 import { TransactionsService } from 'src/app/home/services/transactions.service';
@@ -17,7 +18,7 @@ import { IsNumber } from '../validators/validators';
   standalone: true,
   imports: IMPORTS
 })
-export class TransactionFormComponent implements OnDestroy {
+export class TransactionFormComponent {
 
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
@@ -32,12 +33,12 @@ export class TransactionFormComponent implements OnDestroy {
   public TransactionType = TransactionType;
 
   private activeAccounts?: Account[];
-  private onDestroySubject: Subject<void> = new Subject();
 
   constructor(
     private accountService: AccountService,
     private transactionsService: TransactionsService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private destroyRef: DestroyRef
   ) {
     addComponentIcons();
 
@@ -62,14 +63,14 @@ export class TransactionFormComponent implements OnDestroy {
     });
 
     this.form.get('type')!.valueChanges.pipe(
-      takeUntil(this.onDestroySubject),
+      takeUntilDestroyed(this.destroyRef),
       map(() => this.form.value.origin as { account?: Account, pocket?: Pocket }),
       filter(({ account, pocket }) => !!(account?.isActive && pocket === account.pockets[0])),
       map(({ account }) => account as Account),
     ).subscribe(account => this.form.get('origin.pocket')!.setValue(account.pockets?.[1]));
 
     this.form.get('origin.account')!.valueChanges.pipe(
-      takeUntil(this.onDestroySubject)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(({ isActive, pockets }: Account) => {
       const pocketControl = this.form.get('origin.pocket')!;
       if (isActive) {
@@ -81,7 +82,7 @@ export class TransactionFormComponent implements OnDestroy {
     });
 
     this.form.get('destination.account')!.valueChanges.pipe(
-      takeUntil(this.onDestroySubject)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe((destinationAccount?: Account) => {
       const pocketControl = this.form.get('destination.pocket')!;
       if (destinationAccount && destinationAccount.isActive) {
@@ -105,7 +106,7 @@ export class TransactionFormComponent implements OnDestroy {
       pairwise(),
       filter(([from, to]) => from !== to),
       map(([, state]) => state),
-      takeUntil(this.onDestroySubject),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(newState => {
       const destinationAccount = this.form.get('destination.account') as FormControl;
       switch (newState) {
@@ -163,11 +164,6 @@ export class TransactionFormComponent implements OnDestroy {
     }
     this.isLoading = true;
     this.transactionsService.createTransaction(this.form.value).subscribe(() => this.closeModal.emit());
-  }
-
-  ngOnDestroy() {
-    this.onDestroySubject.next();
-    this.onDestroySubject.complete();
   }
 
 }

@@ -16,8 +16,9 @@ export class AppComponent { }
 // Filtro de bolsillos en el form de transacciones
 // Agregar bolsillo a transacciones con crédito
 // Transacciones a la misma cuenta
-// TODO: autocapitalize="sentences" a todos los ion-inputs
-// TODO: takeUntilDestroyed: import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+// autocapitalize="sentences" a todos los ion-inputs
+// takeUntilDestroyed: import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+// ><
 // TODO: Limpiar imports, tanto en el componente como en las utils
 // TODO: Verificar estilos
 // TODO: Formatear código

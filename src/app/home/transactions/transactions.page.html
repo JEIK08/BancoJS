@@ -3,12 +3,12 @@
     <ion-title>Transacciones</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar placeholder="Filtrar" [formControl]="filterControl"></ion-searchbar>
+    <ion-searchbar placeholder="Filtrar" [formControl]="filterControl" />
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  @if (isFirstLoad) { <ion-spinner class="content-spinner" color="primary"></ion-spinner> }
+  @if (isFirstLoad) { <ion-spinner class="content-spinner" color="primary" /> }
 
   @if (transactions.length) {
     <ion-list>

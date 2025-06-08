@@ -3,10 +3,10 @@
     <ion-title>Cuentas</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="isFormOpen = true">
-        <ion-icon slot="icon-only" name="add-circle-sharp"></ion-icon>
+        <ion-icon slot="icon-only" name="add-circle-sharp" />
       </ion-button>
       <ion-button (click)="editAccountsOrder()">
-        <ion-icon name="reorder-two-outline"></ion-icon>
+        <ion-icon name="reorder-two-outline" />
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -42,7 +42,7 @@
                 }
               </ion-text>
 
-              <ion-reorder slot="end"></ion-reorder>
+              <ion-reorder slot="end" />
             </ion-item>
 
             @if (account.isActive) {
@@ -60,19 +60,19 @@
       </ion-reorder-group>
     </ion-accordion-group>
   } @else {
-    <ion-spinner class="content-spinner" color="primary"></ion-spinner>
+    <ion-spinner class="content-spinner" color="primary" />
   }
 
   <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
     <ng-template>
-      <app-account-form (closeModal)="isFormOpen = false"></app-account-form>
+      <app-account-form (closeModal)="isFormOpen = false" />
     </ng-template>
   </ion-modal>
 
   <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
     <ng-template>
       @if (selectedAccount) {
-        <app-pockets [account]="selectedAccount" (closeModal)="selectedAccount = undefined"></app-pockets>
+        <app-pockets [account]="selectedAccount" (closeModal)="selectedAccount = undefined" />
       }
     </ng-template>
   </ion-modal>

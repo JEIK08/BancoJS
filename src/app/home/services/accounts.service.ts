@@ -26,7 +26,6 @@ export class AccountService {
           tap(() => this.accountsSubject.next(undefined))
         )
       ),
-      
       concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account/* , { queryConstrains: [orderBy('order', 'asc')] } */)),
       // tap(() => {
       //   this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
