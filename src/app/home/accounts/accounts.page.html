@@ -28,17 +28,17 @@
               <ion-label>
                 {{ account.name }}
                 @if (account.pockets?.[0]?.value; as debt) {
-                  <p class="green">{{ account.value - debt | currency:'':'$ ':'1.2-2' }}</p>
+                  <p class="color-value IN">{{ account.value - debt | currency:'':'$ ':'1.2-2' }}</p>
                 }
               </ion-label>
 
               <ion-text slot="end" class="ion-text-end">
-                <span class="bold-value" [ngClass]="account.isActive ? 'green' : 'red'">
+                <span class="bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
                   {{ account.value | currency:'':'$ ':'1.2-2' }}
                 </span>
                 @if (account.pockets?.[0]?.value; as debt) {
                   <br>
-                  <small class="red">(- {{ debt | currency:'':'$ ':'1.2-2' }})</small>
+                  <small class="color-value OUT">(- {{ debt | currency:'':'$ ':'1.2-2' }})</small>
                 }
               </ion-text>
 
@@ -50,7 +50,7 @@
                 @for (pocket of account.pockets; track pocket.name; let isFirst = $first) {
                   <ion-item>
                     <ion-label>{{ pocket.name }}</ion-label>
-                    <ion-text [ngClass]="isFirst ? 'red' : 'green'">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</ion-text>
+                    <ion-text class="color-value" [ngClass]="isFirst ? 'OUT' : 'IN'">{{ pocket.value | currency:'':'$ ':'1.2-2' }}</ion-text>
                   </ion-item>
                 }
               </ion-list>

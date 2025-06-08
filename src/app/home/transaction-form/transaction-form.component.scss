@@ -28,17 +28,3 @@ ion-segment-button {
   }
 
 }
-
-.value {
-  &.IN {
-    color: var(--ion-color-success);
-  }
-
-  &.OUT {
-    color: var(--ion-color-danger);
-  }
-
-  &.TRANSFER {
-    color: var(--ion-color-primary);
-  }
-}

@@ -1,4 +1,4 @@
-import { CurrencyPipe, NgTemplateOutlet } from '@angular/common';
+import { CurrencyPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import {
@@ -20,7 +20,9 @@ import {
 export const IMPORTS = [
   ReactiveFormsModule,
   CurrencyPipe,
+  NgClass,
   NgTemplateOutlet,
+
   IonContent,
   IonHeader,
   IonInfiniteScroll,

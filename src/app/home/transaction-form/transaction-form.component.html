@@ -33,7 +33,7 @@
       <ion-item>
         <ion-input label-placement="floating" label="Valor" type="number" formControlName="value">
           @if (form.value.value) {
-            <ion-text slot="end" class="value" [ngClass]="form.value.type">
+            <ion-text slot="end" class="color-value" [ngClass]="form.value.type">
               {{ form.value.value | currency:'':'$ ':'1.2-2' }}
             </ion-text>
           }

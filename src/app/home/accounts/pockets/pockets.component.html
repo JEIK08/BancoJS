@@ -3,7 +3,7 @@
     <ion-title>
       <ion-input type="text" formControlName="name" />
     </ion-title>
-    <ion-text slot="end" class="ion-padding-end bold-value" [ngClass]="account.isActive ? 'green' : 'red'">
+    <ion-text slot="end" class="ion-margin-end bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
       {{ account.value | currency:'':'$ ':'1.2-2' }}
     </ion-text>
   </ion-toolbar>
@@ -13,10 +13,9 @@
   <ion-content [formGroup]="form">
     <ion-list>
       <ion-reorder-group formArrayName="pockets" [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
-        @for (pocket of pockets.controls; track pocket; let i = $index; let isFirst = $first) {
+        @for (pocket of pockets.controls; track pocket; let i = $index) {
           <ion-item [formGroupName]="i" class="custom-pocket">
             <ion-input
-              [ngClass]="{ 'value-red': isFirst }"
               class="pocket-name"
               formControlName="name"
               [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
@@ -41,7 +40,7 @@
         <ion-item>
           <ion-text slot="start">
             <span class="ion-margin-end">Total</span>
-            <span class="bold-value green" style="user-select: text">
+            <span class="bold-value color-value IN" style="user-select: text">
               {{ total | currency:'':'$ ':'1.2-2' }} ({{ account.value - total | currency:'':'$ ':'1.2-2' }})
             </span>
           </ion-text>

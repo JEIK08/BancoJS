@@ -25,12 +25,18 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-.green {
-  color: var(--ion-color-success) !important;
-}
-
-.red {
-  color: var(--ion-color-danger) !important;
+.color-value {
+  &.IN {
+    color: var(--ion-color-success);
+  }
+  
+  &.OUT {
+    color: var(--ion-color-danger);
+  }
+  
+  &.TRANSFER {
+    color: var(--ion-color-primary);
+  }
 }
 
 .bold-value {

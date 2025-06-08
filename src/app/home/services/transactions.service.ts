@@ -35,7 +35,6 @@ export class TransactionsService {
       date: this.firestoreService.getDate(data.date) as any,
       account: {
         name: origin.name,
-        isActive: origin.isActive
       }
     } as Transaction;
 
@@ -69,7 +68,7 @@ export class TransactionsService {
 
     if (destination) {
       const destinationBody: Partial<Account> = {};
-      transaction.destination = { name: destination.name, isActive: destination.isActive };
+      transaction.destination = { name: destination.name };
 
       if (destination.isActive) {
         const pocket = destinationPocket as Pocket;

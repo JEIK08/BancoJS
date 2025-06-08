@@ -16,14 +16,14 @@
     ::ng-deep .helper-text {
       color: var(--ion-color-success);
     }
-    
-    &.value-red ::ng-deep .helper-text {
-      color: var(--ion-color-danger);
-    }
   }
 
   .pocket-value {
     width: 84px;
     text-align: end;
   }
+}
+
+ion-content .custom-pocket:first-child ::ng-deep .helper-text {
+  color: var(--ion-color-danger);
 }

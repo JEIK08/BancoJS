@@ -24,7 +24,7 @@
             <p>
               {{ transaction.account.name }}
               @if (transaction.account.pocket) { ({{ transaction.account.pocket }}) }
-              @if (transaction.type === TransactionType.TRANSFER && transaction.destination) {
+              @if (transaction.destination) {
                 <br>
                 {{ transaction.destination.name }}
                 @if (transaction.destination.pocket) { ({{ transaction.destination.pocket }}) }
@@ -32,17 +32,9 @@
             </p>
           </ion-label>
 
-          @switch (transaction.type) {
-            @case (TransactionType.IN) {
-              <ng-container *ngTemplateOutlet="transactionValue; context: { $implicit: transaction, color: 'success' }" />
-            }
-            @case (TransactionType.OUT) {
-              <ng-container *ngTemplateOutlet="transactionValue; context: { $implicit: transaction, color: 'danger' }" />
-            }
-            @case (TransactionType.TRANSFER) {
-              <ng-container *ngTemplateOutlet="transactionValue; context: { $implicit: transaction, color: 'primary' }" />
-            }
-          }
+          <ion-label class="ion-text-end bold-value color-value" slot="end" style="flex-grow: 0" [ngClass]="transaction.type">
+            {{ transaction.value | currency:'':'$ ':'1.2-2' }}
+          </ion-label>
         </ion-item>
       }
     </ion-list>
@@ -52,7 +44,3 @@
     <ion-infinite-scroll-content />
   </ion-infinite-scroll>
 </ion-content>
-
-<ng-template #transactionValue let-t let-color="color">
-  <ion-label class="bold-value ion-text-end" slot="end" [color]="color">{{ t.value | currency:'':'$ ':'1.2-2' }}</ion-label>
-</ng-template>

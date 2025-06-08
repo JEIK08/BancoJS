@@ -12,12 +12,10 @@ export interface Transaction {
   date: Date;
   account: {
     name: string;
-    isActive: boolean;
     pocket?: string;
   }
   destination?: {
     name: string;
-    isActive: boolean;
     pocket?: string;
   }
 
