@@ -4,7 +4,7 @@ import { ItemReorderEventDetail } from '@ionic/angular';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
-import { Account } from 'src/app/interfaces/account';
+import { Account, Pocket } from 'src/app/interfaces/account';
 import { IMPORTS, addComponentIcons } from './pockets.utils';
 import { IsNumber } from '../../validators/validators';
 
@@ -20,12 +20,11 @@ export class PocketsComponent implements OnInit {
   @Input() public account!: Account;
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
-  public accountName!: string;
-  public total = 0;
-  public isLoading: boolean = false;
-
   public form!: FormGroup;
   public pockets!: FormArray<FormGroup>;
+
+  public total = 0;
+  public isLoading: boolean = false;
 
   constructor(
     private accountService: AccountService,
@@ -39,27 +38,24 @@ export class PocketsComponent implements OnInit {
 
     if (this.account.isActive) {
       this.pockets = this.formBuilder.array<FormGroup>([]);
-      this.form.addControl('debt', this.formBuilder.control(0, IsNumber));
       this.form.addControl('pockets', this.pockets);
-      this.account.pockets.forEach(() => this.addPocket());
+      this.account.pockets.forEach(pocket => this.addPocket(pocket));
       this.form.setValidators(() => this.validatePockets());
     }
-    this.form.reset(this.account);
   }
 
   validatePockets() {
-    this.total = this.pockets.controls.reduce(
-      (total, pocket) => total + pocket.get('value')!.value,
-      this.form.get('debt')!.value as number
-    );
+    this.total = this.pockets.controls.reduce((total, pocket) => total + pocket.value.value, 0);
     this.total = Math.round(this.total * 100) / 100;
     return this.total === this.account.value ? null : { noTotal: true };
   }
 
-  addPocket() {
-    this.pockets.push(
-      this.formBuilder.group({ name: ['', Validators.required], value: [0, IsNumber] })
-    );
+  addPocket(pocket?: Pocket) {
+    const newPocket = this.formBuilder.group({
+      name: [pocket?.name, Validators.required],
+      value: [pocket?.value ?? 0, IsNumber]
+    });
+    this.pockets.push(newPocket);
   }
 
   deletePocket(index: number) {
@@ -67,13 +63,14 @@ export class PocketsComponent implements OnInit {
   }
 
   dragPocket({ from, to, complete }: ItemReorderEventDetail) {
-    from--;
-    to--;
-    console.log({ from, to, complete });
-    const pocket = this.pockets.at(from);
-    this.pockets.removeAt(from);
-    this.pockets.insert(to, pocket);
-    complete();
+    if (from <= 1 || to <= 1) {
+      complete(false);
+      return;
+    }
+
+    const reorderedPockets = complete(this.pockets.value) as Pocket[];
+    this.pockets.clear();
+    reorderedPockets.forEach(pocket => this.addPocket(pocket));
   }
 
   save() {

@@ -1,4 +1,4 @@
-import { CurrencyPipe, NgClass, NgTemplateOutlet } from '@angular/common';
+import { CurrencyPipe, NgClass } from '@angular/common';
 
 import {
   IonAccordion,
@@ -12,13 +12,15 @@ import {
   IonLabel,
   IonList,
   IonModal,
+  IonReorder,
+  IonReorderGroup,
   IonSpinner,
   IonText,
   IonTitle,
   IonToolbar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addCircleSharp, chevronDownOutline } from 'ionicons/icons';
+import { addCircleSharp, chevronDownOutline, reorderTwoOutline } from 'ionicons/icons';
 
 import { AccountFormComponent } from './account-form/account-form.component';
 import { PocketsComponent } from './pockets/pockets.component';
@@ -26,7 +28,7 @@ import { PocketsComponent } from './pockets/pockets.component';
 export const IMPORTS = [
   CurrencyPipe,
   NgClass,
-  NgTemplateOutlet,
+
   IonAccordion,
   IonAccordionGroup,
   IonButton,
@@ -38,14 +40,17 @@ export const IMPORTS = [
   IonLabel,
   IonList,
   IonModal,
+  IonReorder,
+  IonReorderGroup,
   IonSpinner,
   IonText,
   IonTitle,
   IonToolbar,
+
   AccountFormComponent,
   PocketsComponent
 ];
 
 export const addComponentIcons = () => {
-  addIcons({ addCircleSharp, chevronDownOutline });
+  addIcons({ addCircleSharp, chevronDownOutline, reorderTwoOutline });
 };

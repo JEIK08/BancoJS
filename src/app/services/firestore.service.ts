@@ -108,9 +108,9 @@ export class FirestoreService {
     return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
   }
   
-  setDocument<T>(collectionName: Collection, id: string, data: any) {
-    // data.debt = deleteField();
-    // return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
+  setDocument(collectionName: Collection, id: string, data: any) {
+    data.debt = deleteField();
+    from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
   }
 
   mapDate(date: any) {

@@ -11,6 +11,7 @@ interface AccountData {
   id: string;
   name: string;
   value: number;
+  order: number;
 }
 
 interface ActiveAccount {

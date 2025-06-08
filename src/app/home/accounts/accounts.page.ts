@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { takeUntil } from 'rxjs';
+import { forkJoin, takeUntil } from 'rxjs';
 
 import { AccountService } from '../services/accounts.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -17,6 +17,7 @@ export default class AccountsPage {
 
   public accounts?: Account[];
   public accordeonValues?: string[];
+  public disableReorder = false;
   public isFormOpen: boolean = false;
   public selectedAccount?: Account;
 
@@ -31,6 +32,14 @@ export default class AccountsPage {
       this.accordeonValues = [];
       this.accounts = accounts;
     });
+  }
+
+  editAccountsOrder() {
+    this.disableReorder = !this.disableReorder;
+    if (this.disableReorder || !this.accounts) return;
+    const accounts = this.accounts;
+    this.accounts = undefined;
+    forkJoin(accounts.map(({ id }, index) => this.accountsService.updateAccount(id, { order: index }))).subscribe();
   }
 
 }

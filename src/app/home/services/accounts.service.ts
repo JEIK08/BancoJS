@@ -5,6 +5,7 @@ import { Collection, FirestoreService } from '../../services/firestore.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 import { Account } from '../../interfaces/account';
+import { orderBy } from '@angular/fire/firestore';
 
 @Injectable()
 export class AccountService {
@@ -25,19 +26,26 @@ export class AccountService {
           tap(() => this.accountsSubject.next(undefined))
         )
       ),
+      // , { queryConstrains: [orderBy('order', 'asc')] }
       concatMap(() => this.firestoreService.getDocuments<Account>(Collection.Account)),
-      // tap(() => {
-      //   this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
-      //     accounts.forEach((account: any) => {
-      //       if (!account.isActive || !account.debt || account.pockets[0].name === 'Deuda') return;
-      //       const id = account.id;
-      //       delete account.id;
-      //       account.pockets.unshift({ name: 'Deuda', value: account.debt });
-      //       delete account.debt;
-      //       this.firestoreService.setDocument(Collection.Account, id, account).subscribe();
-      //     });
-      //   });
-      // })
+      tap(() => {
+        this.firestoreService.getDocuments<Account>(Collection.Account).subscribe(accounts => {
+          accounts.forEach((account: any, index) => {
+            const id = account.id;
+            if (account.isActive && 'debt' in account && account.pockets[0].name !== 'Deuda') {
+              delete account.id;
+              account.pockets.unshift({ name: 'Deuda', value: account.debt });
+              delete account.debt;
+            }
+
+            if (!('order' in account)) {
+              account.order = index;
+            }
+
+            this.firestoreService.setDocument(Collection.Account, id, account);
+          });
+        });
+      })
     ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
@@ -56,7 +64,7 @@ export class AccountService {
     return this.firestoreService.addDocument(Collection.Account, accountData);
   }
 
-  updateAccount(accountId: string, accountData: Pick<Account, 'name' | 'pockets'>) {
+  updateAccount(accountId: string, accountData: Partial<Account>) {
     return this.firestoreService.updateDocument<Account>(Collection.Account, accountId, accountData);
   }
 

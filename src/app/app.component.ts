@@ -17,3 +17,4 @@ export class AppComponent { }
 // TODO: Agregar bolsillo a transacciones con crédito
 // TODO: Limpiar imports, tanto en el componente como en las utils
 // TODO: Transacciones a la misma cuenta
+// TODO: autocapitalize="sentences" a todos los ion-inputs

@@ -14,7 +14,11 @@
     min-height: inherit;
 
     ::ng-deep .helper-text {
-      color: var(--ion-color-success) !important;
+      color: var(--ion-color-success);
+    }
+    
+    &.value-red ::ng-deep .helper-text {
+      color: var(--ion-color-danger);
     }
   }
 
