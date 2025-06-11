@@ -32,8 +32,11 @@
             </p>
           </ion-label>
 
-          <ion-label class="ion-text-end bold-value color-value" slot="end" style="flex-grow: 0" [ngClass]="transaction.type">
-            {{ transaction.value | currency:'':'$ ':'1.2-2' }}
+          <ion-label class="ion-text-end" slot="end" style="flex-grow: 0">
+            <ion-text class="bold-value color-value" [ngClass]="transaction.type">
+              {{ transaction.value | currency:'':'$ ':'1.2-2' }}
+            </ion-text>
+            <p>{{ transaction.date | date:'shortTime' }}</p>
           </ion-label>
         </ion-item>
       }
