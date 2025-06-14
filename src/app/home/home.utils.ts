@@ -9,7 +9,7 @@ import {
   IonTabs
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, listOutline, powerOutline, add } from 'ionicons/icons';
+import { add, cashOutline, documentOutline, listOutline, powerOutline } from 'ionicons/icons';
 
 import { TransactionFormComponent } from './transaction-form/transaction-form.component';
 
@@ -26,5 +26,5 @@ export const IMPORTS = [
 ];
 
 export const addComponentIcons = () => {
-    addIcons({ cashOutline, listOutline, powerOutline, add });
+  addIcons({ add, cashOutline, documentOutline, listOutline, powerOutline });
 };

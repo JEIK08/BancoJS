@@ -11,6 +11,15 @@
   </ion-tab-bar>
 </ion-tabs>
 
+@if (isDev) {
+  <ion-fab vertical="bottom" horizontal="end" style="bottom: 140px" (click)="inputFile.click()">
+    <ion-fab-button color="danger">
+      <ion-icon name="document-outline" />
+      <input #inputFile type="file" hidden (change)="selectFile($event)">
+    </ion-fab-button>
+  </ion-fab>
+}
+
 <ion-fab vertical="bottom" horizontal="start" style="bottom: 70px" (click)="logOut()">
   <ion-fab-button color="danger">
     <ion-icon name="power-outline" />
