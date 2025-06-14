@@ -85,7 +85,10 @@
                 <ion-list>
                   @for (pocket of filteredPockets; track pocket.name) {
                     <ion-item button detail (click)="selectPocket('origin.pocket', pocket); originPockets.dismiss()">
-                      {{ pocket.name }}
+                      <ion-label>{{ pocket.name }}</ion-label>
+                      <ion-label slot="end" class="color-value IN ion-text-end">
+                        {{ pocket.value | currency:'':'$ ':'1.2-2' }}
+                      </ion-label>
                     </ion-item>
                   }
                 </ion-list>

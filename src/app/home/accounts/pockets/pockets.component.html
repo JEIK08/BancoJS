@@ -20,6 +20,7 @@
                 class="pocket-name"
                 autocapitalize="sentences"
                 formControlName="name"
+                [readonly]="i < 2"
                 [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
               />
               <ion-input class="pocket-value" formControlName="value" slot="end" type="number" />

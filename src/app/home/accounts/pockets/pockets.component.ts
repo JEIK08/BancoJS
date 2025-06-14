@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ItemReorderEventDetail } from '@ionic/angular';
+
+import { IonContent } from '@ionic/angular/standalone';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
 
@@ -15,7 +17,9 @@ import { IsNumber } from '../../validators/validators';
   standalone: true,
   imports: IMPORTS
 })
-export class PocketsComponent implements OnInit {
+export class PocketsComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(IonContent) public content!: IonContent;
 
   @Input() public account!: Account;
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
@@ -25,6 +29,8 @@ export class PocketsComponent implements OnInit {
 
   public total = 0;
   public isLoading: boolean = false;
+
+  private scrollElement!: HTMLElement;
 
   constructor(
     private accountService: AccountService,
@@ -42,6 +48,10 @@ export class PocketsComponent implements OnInit {
       this.account.pockets.forEach(pocket => this.addPocket(pocket));
       this.form.setValidators(() => this.validatePockets());
     }
+  }
+
+  ngAfterViewInit() {
+    this.content.getScrollElement().then(element => this.scrollElement = element);
   }
 
   validatePockets() {
@@ -68,9 +78,12 @@ export class PocketsComponent implements OnInit {
       return;
     }
 
+    const scroll = this.scrollElement.scrollTop;
     const reorderedPockets = complete(this.pockets.value) as Pocket[];
     this.pockets.clear();
     reorderedPockets.forEach(pocket => this.addPocket(pocket));
+    this.pockets.markAsDirty();
+    this.scrollElement.scrollTo({ top: scroll });
   }
 
   save() {
