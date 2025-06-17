@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, DestroyRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, filter, map, pairwise, startWith } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, merge, pairwise, startWith, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
@@ -48,7 +48,7 @@ export class TransactionFormComponent {
     });
 
     this.form = this.formBuilder.group({
-      description: [undefined, Validators.required],
+      description: [undefined, this.validateDescription],
       type: [TransactionType.OUT],
       value: [undefined, IsNumber],
       date: [new Date()],
@@ -129,6 +129,20 @@ export class TransactionFormComponent {
         }
       }
     });
+
+    merge(
+      this.form.get('origin.pocket')!.valueChanges,
+      this.form.get('destination.pocket')!.valueChanges
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      debounceTime(10)
+    ).subscribe(() => this.form.get('description')?.updateValueAndValidity());
+  }
+
+  validateDescription(control: FormControl) {
+    if (!control.parent) return null;
+    const formValue = control.parent.value;
+    return (formValue.origin.pocket || formValue.destination?.pocket) ? null : Validators.required(control);
   }
 
   initCalendarDate() {

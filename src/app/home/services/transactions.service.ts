@@ -29,7 +29,7 @@ export class TransactionsService {
     const destinationPocket: Pocket | undefined = data.destination?.pocket;
 
     const transaction: Transaction = {
-      description: data.description,
+      description: data.description ?? originPocket?.name ?? destinationPocket?.name,
       type,
       value,
       date: this.firestoreService.getDate(data.date) as any,
