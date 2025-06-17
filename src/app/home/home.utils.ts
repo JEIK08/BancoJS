@@ -1,8 +1,10 @@
 import {
+  IonAlert,
   IonFab,
   IonFabButton,
   IonIcon,
   IonLabel,
+  IonLoading,
   IonModal,
   IonTabBar,
   IonTabButton,
@@ -14,10 +16,12 @@ import { add, cashOutline, documentOutline, listOutline, powerOutline } from 'io
 import { TransactionFormComponent } from './transaction-form/transaction-form.component';
 
 export const IMPORTS = [
+  IonAlert,
   IonFab,
   IonFabButton,
   IonIcon,
   IonLabel,
+  IonLoading,
   IonModal,
   IonTabBar,
   IonTabButton,

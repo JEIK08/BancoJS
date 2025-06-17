@@ -145,6 +145,16 @@ export class TransactionFormComponent {
     return (formValue.origin.pocket || formValue.destination?.pocket) ? null : Validators.required(control);
   }
 
+  initFormWith(receiptData: any) {
+    this.form.get('type')!.setValue(receiptData.type);
+    this.form.get('value')!.setValue(receiptData.value);
+    this.form.get('date')!.setValue(receiptData.date);
+    this.form.get('origin.account')!.setValue(this.accounts?.find(({ id }) => id === receiptData.account));
+    if (receiptData.destination) {
+      this.form.get('destination.account')!.setValue(this.accounts?.find(({ id }) => id === receiptData.destination));
+    }
+  }
+
   initCalendarDate() {
     this.calendarInitialDate = (new Date((this.form.value.date as Date).getTime() - this.timeZoneOffset)).toISOString();
   }

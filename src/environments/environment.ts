@@ -11,6 +11,10 @@ export const environment = {
     storageBucket: "banco-js.appspot.com",
     messagingSenderId: "498859569983",
     appId: "1:498859569983:web:b12b482724963a7257198a"
+  },
+  accounts: {
+    active: 'mNz5dimTEbTnLLspoH1F',
+    pasive: '3A2sZ9M8wEfXGlLhnm4y'
   }
 };
 

@@ -20,9 +20,12 @@ import { IMPORTS, addComponentIcons } from './home.utils';
 export default class HomeComponent implements ViewWillEnter {
   @ViewChild(TransactionFormComponent) public transactionForm!: TransactionFormComponent;
 
-  public isFormOpen: boolean = false;
+  public isFormOpen = false;
+  public isProcessingImg = false;
+  public showIntentError = false;
   public isDev = !environment.production;
-  private isLoggingOut: boolean = false;
+
+  private isLoggingOut = false;
 
   constructor(
     private platform: Platform,
@@ -33,7 +36,24 @@ export default class HomeComponent implements ViewWillEnter {
   ) {
     addComponentIcons();
 
-    this.platform.ready().then(() => this.ocrService.processReceipt()).then(data => this.initFormWith(data));
+    this.platform.ready()
+      .then(() => this.ocrService.getIntentData())
+      .then(image => {
+        if (!image) return;
+        this.isProcessingImg = true;
+        return this.ocrService.getImageData(image);
+      })
+      .then(data => {
+        if (!data) return;
+        this.isFormOpen = true;
+        setTimeout(() => {
+          this.transactionForm.initFormWith(data);
+          this.isProcessingImg = false;
+        });
+      }).catch(() => {
+        this.isProcessingImg = false;
+        this.showIntentError = true;
+      });
   }
 
   logOut() {
@@ -52,28 +72,22 @@ export default class HomeComponent implements ViewWillEnter {
   selectFile(event: any) {
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
+    this.isProcessingImg = true;
 
     reader.onload = () => {
-      this.ocrService.readImage(reader.result as string).then(data => {
-        console.log(data);
-        this.initFormWith(data);
+      this.ocrService.getImageData(reader.result as string).then(data => {
+        this.isProcessingImg = false;
+        this.isFormOpen = true;
+        setTimeout(() => this.transactionForm.initFormWith(data));
+      }).catch(() => {
+        this.isProcessingImg = false;
+        this.showIntentError = true;
       });
     };
   }
 
-  private initFormWith(receiptData: any) {
-    if (!receiptData) return;
-    this.isFormOpen = true;
-    setTimeout(() => {
-      const form = this.transactionForm.form;
-      form.get('type')!.setValue(receiptData.type);
-      form.get('value')!.setValue(receiptData.value);
-      form.get('date')!.setValue(receiptData.date);
-      form.get('origin.account')!.setValue(this.transactionForm.accounts?.find(({ id }) => id === receiptData.account));
-      if (receiptData.destination) {
-        form.get('destination.account')!.setValue(this.transactionForm.accounts?.find(({ id }) => id === receiptData.destination));
-      }
-    });
+  closeIntent() {
+    this.ocrService.terminate();
   }
 
 }

@@ -11,6 +11,14 @@
   </ion-tab-bar>
 </ion-tabs>
 
+<ion-fab vertical="bottom" horizontal="start" style="bottom: 70px" (click)="logOut()">
+  <ion-fab-button color="danger">
+    <ion-icon name="power-outline" />
+  </ion-fab-button>
+</ion-fab>
+
+<ion-loading [isOpen]="isProcessingImg" />
+
 @if (isDev) {
   <ion-fab vertical="bottom" horizontal="end" style="bottom: 140px" (click)="inputFile.click()">
     <ion-fab-button color="danger">
@@ -20,22 +28,21 @@
   </ion-fab>
 }
 
-<ion-fab vertical="bottom" horizontal="start" style="bottom: 70px" (click)="logOut()">
-  <ion-fab-button color="danger">
-    <ion-icon name="power-outline" />
+<ion-fab vertical="bottom" horizontal="end" style="bottom: 70px" (click)="isFormOpen = true">
+  <ion-fab-button>
+    <ion-icon name="add" />
   </ion-fab-button>
 </ion-fab>
-
-@if (!isFormOpen) {
-  <ion-fab vertical="bottom" horizontal="end" style="bottom: 70px" (click)="isFormOpen = true">
-    <ion-fab-button>
-      <ion-icon name="add" />
-    </ion-fab-button>
-  </ion-fab>
-}
 
 <ion-modal [isOpen]="isFormOpen" (didDismiss)="isFormOpen = false">
   <ng-template>
     <app-transaction-form (closeModal)="isFormOpen = false" />
   </ng-template>
 </ion-modal>
+
+<ion-alert
+  header="El comprobante no pudo ser procesado"
+  [isOpen]="showIntentError"
+  [buttons]="['Cerrar']"
+  (didDismiss)="closeIntent()"
+/>
