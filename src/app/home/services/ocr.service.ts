@@ -71,7 +71,7 @@ export class OcrService {
           { left: 65, top: 2174, width: 118, height: 30 },
           'Cuotas',
           { left: 67, top: 821, width: 700, height: 43 },
-          /(\d{1,2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
+          /(\d{2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
           ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           { left: 66, top: 689, width: 607, height: 73 }
         )
@@ -86,12 +86,42 @@ export class OcrService {
           { left: 65, top: 193, width: 698, height: 77 },
           '¡Has enviado dinero!',
           { left: 62, top: 299, width: 469, height: 60 },
-          /(\d{1,2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
+          /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
           ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
           { left: 65, top: 1263, width: 264, height: 38 },
         )
       };
     } catch (e) { this.processError('Interbank out error', e) };
+
+    try {
+      return {
+        type: TransactionType.OUT,
+        account: environment.accounts.active,
+        ...await this.processImage(
+          { left: 64, top: 252, width: 940, height: 159 },
+          'Comprobante de compra con tarjeta de débito',
+          { left: 65, top: 444, width: 382, height: 42 },
+          /(\d{2}) (\w{3}) (\d{4}) (\d{2}):(\d{2})/,
+          ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'],
+          { left: 614, top: 610, width: 402, height: 44 },
+        )
+      };
+    } catch (e) { this.processError('Debit out with card error', e) };
+    
+    try {
+      return {
+        type: TransactionType.OUT,
+        account: environment.accounts.active,
+        ...await this.processImage(
+          { left: 67, top: 259, width: 682, height: 72 },
+          '¡Listo! Hiciste tu pago',
+          { left: 66, top: 362, width: 306, height: 39 },
+          /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
+          ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+          { left: 65, top: 964, width: 343, height: 38 },
+        )
+      };
+    } catch (e) { this.processError('PSE error', e) };
 
     throw 404;
   }
