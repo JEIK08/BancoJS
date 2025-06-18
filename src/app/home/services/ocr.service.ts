@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 
 import { SendIntent } from "send-intent";
 import { Filesystem } from "@capacitor/filesystem";
-import { createWorker, OEM, Rectangle, Worker } from 'tesseract.js';
+import { createWorker, OEM, RecognizeResult, Rectangle, Worker } from 'tesseract.js';
 
 import { TransactionType } from 'src/app/interfaces/transaction';
 
@@ -29,21 +29,54 @@ export class OcrService {
   async getImageData(base64: string) {
     this.base64 = base64;
     this.worker = await createWorker('spa', OEM.LSTM_ONLY);
+
+    // Credit receipt, after generate
+    // try {
+    //   return {
+    //     type: TransactionType.OUT,
+    //     account: environment.accounts.pasive,
+    //     destination: environment.accounts.active,
+    //     ...await this.processImage(
+    //       { left: 65, top: 252, width: 928, height: 73 },
+    //       'Comprobante de transacción',
+    //       { left: 64, top: 359, width: 927, height: 46 },
+    //       /(\d{1,2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
+    //       ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    //       { left: 661, top: 524, width: 355, height: 47 }
+    //     )
+    //   };
+    // } catch (e) { this.processError('Credit transaction error', e) };
+
+    try {
+      return {
+        type: TransactionType.OUT,
+        account: environment.accounts.active,
+        ...await this.processImage(
+          { left: 64, top: 252, width: 544, height: 145 },
+          'Comprobante de transferencia',
+          { left: 65, top: 445, width: 477, height: 42 },
+          /(\d{2}) (\w{3}) (\d{4}) - (\d{2}):(\d{2}):(\d{2})/,
+          ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'],
+          { left: 628, top: 610, width: 388, height: 45 }
+        )
+      };
+    } catch (e) { this.processError('Debit out error', e) };
+
     try {
       return {
         type: TransactionType.OUT,
         account: environment.accounts.pasive,
         destination: environment.accounts.active,
         ...await this.processImage(
-          { left: 65, top: 252, width: 928, height: 73 },
-          'Comprobante de transacción',
-          { left: 64, top: 359, width: 927, height: 46 },
+          { left: 65, top: 2174, width: 118, height: 30 },
+          'Cuotas',
+          { left: 67, top: 821, width: 700, height: 43 },
           /(\d{1,2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
           ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          { left: 661, top: 524, width: 355, height: 47 }
+          { left: 66, top: 689, width: 607, height: 73 }
         )
       };
-    } catch (e) { this.processError('Credit transaction error', e) };
+    } catch (e) { this.processError('Credit out error', e) };
 
     try {
       return {
@@ -55,10 +88,10 @@ export class OcrService {
           { left: 62, top: 299, width: 469, height: 60 },
           /(\d{1,2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
           ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
-          { left: 65, top: 1263, width: 263, height: 37 },
+          { left: 65, top: 1263, width: 264, height: 38 },
         )
       };
-    } catch (e) { this.processError('Interbank transaction error', e) };
+    } catch (e) { this.processError('Interbank out error', e) };
 
     throw 404;
   }
@@ -71,20 +104,22 @@ export class OcrService {
     monthsNames: string[],
     valueRectangle: Rectangle
   ) {
-    const checkText = await this.worker!.recognize(this.base64!, { rectangle: confirmatiomRectangle });
-    if (checkText.data.text.trim() !== confirmationText) throw '';
+    let result: RecognizeResult;
+    try {
+      result = await this.worker!.recognize(this.base64!, { rectangle: confirmatiomRectangle });
+    } catch (error) { throw '' }
+    if (result.data.text.replaceAll('\n', ' ').trim() !== confirmationText) throw '';
 
-    const dateText = await this.worker!.recognize(this.base64!, { rectangle: dateRectangle });
-    const match = dateText.data.text.match(dateRegExp);
+    result = await this.worker!.recognize(this.base64!, { rectangle: dateRectangle });
+    const match = result.data.text.match(dateRegExp);
     if (!match) throw 'Wrong Date Format';
 
     const [, day, montName, year, hours, minutes] = match;
     const month = String(monthsNames.indexOf(montName) + 1);
     const date = `${ year }-${ month.padStart(2, '0') }-${ day.padStart(2, '0') }T${ hours.padStart(2, '0') }:${ minutes.padStart(2, '0') }`;
 
-    debugger;
-    const value = await this.worker!.recognize(this.base64!, { rectangle: valueRectangle });
-    const valueText = value.data.text.trim();
+    result = await this.worker!.recognize(this.base64!, { rectangle: valueRectangle });
+    const valueText = result.data.text.trim();
     if (!(/^\$\d{1,3}(\.\d{3})*(,\d{2})?$/.test(valueText))) throw 'Wrong value';
     const values = valueText.substring(1).split(',');
     values[0] = values[0].replaceAll('.', '');
