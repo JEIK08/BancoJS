@@ -30,23 +30,6 @@ export class OcrService {
     this.base64 = base64;
     this.worker = await createWorker('spa', OEM.LSTM_ONLY);
 
-    // Credit receipt, after generate
-    // try {
-    //   return {
-    //     type: TransactionType.OUT,
-    //     account: environment.accounts.pasive,
-    //     destination: environment.accounts.active,
-    //     ...await this.processImage(
-    //       { left: 65, top: 252, width: 928, height: 73 },
-    //       'Comprobante de transacción',
-    //       { left: 64, top: 359, width: 927, height: 46 },
-    //       /(\d{1,2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
-    //       ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    //       { left: 661, top: 524, width: 355, height: 47 }
-    //     )
-    //   };
-    // } catch (e) { this.processError('Credit transaction error', e) };
-
     try {
       return {
         type: TransactionType.OUT,
@@ -60,7 +43,7 @@ export class OcrService {
           { left: 628, top: 610, width: 388, height: 45 }
         )
       };
-    } catch (e) { this.processError('Debit out error', e) };
+    } catch (e) { this.processError('Debit out', e) };
 
     try {
       return {
@@ -76,7 +59,7 @@ export class OcrService {
           { left: 66, top: 689, width: 607, height: 73 }
         )
       };
-    } catch (e) { this.processError('Credit out error', e) };
+    } catch (e) { this.processError('Credit out', e) };
 
     try {
       return {
@@ -91,7 +74,7 @@ export class OcrService {
           { left: 65, top: 1263, width: 264, height: 38 },
         )
       };
-    } catch (e) { this.processError('Interbank out error', e) };
+    } catch (e) { this.processError('Interbank out', e) };
 
     try {
       return {
@@ -106,8 +89,8 @@ export class OcrService {
           { left: 614, top: 610, width: 402, height: 44 },
         )
       };
-    } catch (e) { this.processError('Debit out with card error', e) };
-    
+    } catch (e) { this.processError('Debit out with card', e) };
+
     try {
       return {
         type: TransactionType.OUT,
@@ -121,7 +104,22 @@ export class OcrService {
           { left: 65, top: 964, width: 343, height: 38 },
         )
       };
-    } catch (e) { this.processError('PSE error', e) };
+    } catch (e) { this.processError('PSE', e) };
+
+    try {
+      return {
+        type: TransactionType.IN,
+        account: environment.accounts.active,
+        ...await this.processImage(
+          { left: 75, top: 1030, width: 730, height: 44 },
+          'Aceptada Transferencia interbancaria',
+          { left: 67, top: 907, width: 350, height: 45 },
+          /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
+          ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+          { left: 65, top: 775, width: 651, height: 75 },
+        )
+      };
+    } catch (e) { this.processError('Interbank in', e) };
 
     throw 404;
   }
