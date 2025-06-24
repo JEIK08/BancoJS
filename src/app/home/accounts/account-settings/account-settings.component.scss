@@ -1,0 +1,30 @@
+:host,
+form {
+  display: contents;
+}
+
+ion-label + ion-label {
+  flex-grow: 0 !important;
+}
+
+.value-item {
+  > ion-input {
+    --border-width: 0px;
+
+    width: 150px;
+    min-height: inherit;
+
+    ::ng-deep .helper-text {
+      color: var(--ion-color-success);
+    }
+
+    + ion-input {
+      width: 84px;
+      text-align: end;
+    }
+  }
+
+  &.debt-pocket > ion-input:first-child ::ng-deep .helper-text {
+    color: var(--ion-color-danger);
+  }
+}

@@ -1,6 +1,6 @@
 <form [formGroup]="form">
   <ion-header>
-    <ion-toolbar >
+    <ion-toolbar>
       <ion-title>
         <ion-input type="text" autocapitalize="sentences" formControlName="name" />
       </ion-title>
@@ -10,20 +10,26 @@
     </ion-toolbar>
   </ion-header>
 
-  @if (account.isActive) {
-    <ion-content>
-      <ion-list>
+  <ion-content>
+    <ion-list>
+      @if (account.isActive) {
+        <ion-item>
+          <ion-label>Total gastado del mes</ion-label>
+          <ion-label slot="end" class="ion-text-end color-value OUT">
+            {{ account.monthExpenses.value | currency:'':'$ ':'1.2-2' }}
+          </ion-label>
+        </ion-item>
+
         <ion-reorder-group formArrayName="pockets" [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
-          @for (pocket of pockets.controls; track pocket; let i = $index) {
-            <ion-item [formGroupName]="i" class="custom-pocket">
+          @for (pocket of pockets!.controls; track pocket; let i = $index) {
+            <ion-item class="value-item" [formGroupName]="i" [ngClass]="{ 'debt-pocket': i === 0 }">
               <ion-input
-                class="pocket-name"
                 autocapitalize="sentences"
                 formControlName="name"
                 [readonly]="i < 2"
                 [helperText]="form.value.pockets[i].value | currency:'':'$ ':'1.2-2'"
               />
-              <ion-input class="pocket-value" formControlName="value" slot="end" type="number" />
+              <ion-input formControlName="value" slot="end" type="number" />
               @if (i >= 2) {
                 <ion-icon slot="end" name="close-circle-outline" (click)="deletePocket(i)" />
                 <ion-reorder slot="end" class="ion-margin-start" />
@@ -34,9 +40,20 @@
             <ion-icon name="add-circle-outline" style="margin: 0px auto" (click)="addPocket()" />
           </ion-item>
         </ion-reorder-group>
-      </ion-list>
-    </ion-content>
+      } @else {
+        <ion-item class="value-item">
+          <ion-input
+            readonly
+            label="Cupo"
+            [helperText]="form.value.limit | currency:'':'$ ':'1.2-2'"
+          />
+          <ion-input formControlName="limit" slot="end" type="number" />
+        </ion-item>
+      }
+    </ion-list>
+  </ion-content>
 
+  @if (account.isActive) {
     <ion-footer>
       <ion-toolbar>
         <ion-list>

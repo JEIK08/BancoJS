@@ -117,8 +117,8 @@ export class FirestoreService {
     return new Date(date.seconds * 1000);
   }
 
-  getDate(date: Date) {
-    return Timestamp.fromDate(date);
+  getDate(date: Date): Date {
+    return Timestamp.fromDate(date) as any;
   }
 
 }

@@ -32,7 +32,7 @@ export class TransactionsService {
       description: data.description ?? originPocket?.name ?? destinationPocket?.name,
       type,
       value,
-      date: this.firestoreService.getDate(data.date) as any,
+      date: this.firestoreService.getDate(data.date),
       account: {
         name: origin.name,
       }
@@ -50,10 +50,18 @@ export class TransactionsService {
       } else {
         pocket.value -= value;
         origin.value -= value;
+
+        if (origin !== destination) {
+          origin.monthExpenses = {
+            lastUpdate: this.firestoreService.getDate(new Date()),
+            value: Math.round((origin.monthExpenses.value + value) * 100) / 100
+          };
+        }
       }
 
       pocket.value = Math.round(pocket.value * 100) / 100;
       originBody.pockets = origin.pockets;
+      originBody.monthExpenses = origin.monthExpenses;
     } else {
       if (type === TransactionType.IN) origin.value -= value;
       else origin.value += value;

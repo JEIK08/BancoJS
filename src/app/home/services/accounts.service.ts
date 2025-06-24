@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, concatMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, debounceTime, map, takeUntil, tap } from 'rxjs';
 import { orderBy } from '@angular/fire/firestore';
 
 import { Collection, FirestoreService } from '../../services/firestore.service';
@@ -26,10 +26,27 @@ export class AccountService {
           tap(() => this.accountsSubject.next(undefined))
         )
       ),
+      debounceTime(1000),
       concatMap(() => this.firestoreService.getDocuments<Account>(
         Collection.Account,
         { queryConstrains: [orderBy('order', 'asc')] }
       )),
+      map(accounts => {
+        let shouldUpdate = false;
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        accounts.forEach(({ id, isActive, monthExpenses }) => {
+          if (!isActive) return;
+          monthExpenses.lastUpdate = this.firestoreService.mapDate(monthExpenses.lastUpdate);
+          if (monthExpenses.lastUpdate.getMonth() === currentMonth) return;
+          monthExpenses.lastUpdate = today;
+          monthExpenses.value = 0;
+          this.firestoreService.updateDocument<Account>(Collection.Account, id, { monthExpenses })
+          shouldUpdate = true;
+        });
+
+        return shouldUpdate ? undefined : accounts;
+      })
     ).subscribe(accounts => this.accountsSubject.next(accounts));
   }
 
@@ -38,13 +55,21 @@ export class AccountService {
   }
 
   createAccount({ name, isActive }: Pick<Account, 'name' | 'isActive'>) {
-    const account: Partial<Account> = {
+    const account = {
       name,
       isActive,
       value: 0,
       order: this.accountsSubject.value?.length
-    };
-    if (isActive) account.pockets = [{ name: 'Deuda', value: 0 }, { name: 'Disponible', value: 0 }];
+    } as Account;
+    if (account.isActive) {
+      account.pockets = [{ name: 'Deuda', value: 0 }, { name: 'Disponible', value: 0 }];
+      account.monthExpenses = {
+        value: 0,
+        lastUpdate: this.firestoreService.getDate(new Date())
+      }
+    } else {
+      account.limit = 0;
+    }
     return this.firestoreService.addDocument(Collection.Account, account);
   }
 

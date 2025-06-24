@@ -7,17 +7,17 @@ import { IonContent } from '@ionic/angular/standalone';
 import { AccountService } from 'src/app/home/services/accounts.service';
 
 import { Account, Pocket } from 'src/app/interfaces/account';
-import { IMPORTS, addComponentIcons } from './pockets.utils';
+import { IMPORTS, addComponentIcons } from './account-settings.utils';
 import { IsNumber } from '../../validators/validators';
 
 @Component({
-  selector: 'app-pockets',
-  templateUrl: './pockets.component.html',
-  styleUrls: ['./pockets.component.scss'],
+  selector: 'app-account-settings',
+  templateUrl: './account-settings.component.html',
+  styleUrls: ['./account-settings.component.scss'],
   standalone: true,
   imports: IMPORTS
 })
-export class PocketsComponent implements OnInit, AfterViewInit {
+export class AccountSettingsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(IonContent) public content!: IonContent;
 
@@ -25,12 +25,12 @@ export class PocketsComponent implements OnInit, AfterViewInit {
   @Output() public closeModal: EventEmitter<void> = new EventEmitter();
 
   public form!: FormGroup;
-  public pockets!: FormArray<FormGroup>;
+  public pockets?: FormArray<FormGroup>;
 
   public total = 0;
   public isLoading: boolean = false;
 
-  private scrollElement!: HTMLElement;
+  private scrollElement?: HTMLElement;
 
   constructor(
     private accountService: AccountService,
@@ -47,15 +47,17 @@ export class PocketsComponent implements OnInit, AfterViewInit {
       this.form.addControl('pockets', this.pockets);
       this.account.pockets.forEach(pocket => this.addPocket(pocket));
       this.form.setValidators(() => this.validatePockets());
+    } else {
+      this.form.addControl('limit', this.formBuilder.control(this.account.limit, IsNumber));
     }
   }
 
   ngAfterViewInit() {
-    this.content.getScrollElement().then(element => this.scrollElement = element);
+    if (this.account.isActive) this.content.getScrollElement().then(element => this.scrollElement = element);
   }
 
   validatePockets() {
-    this.total = this.pockets.controls.reduce((total, pocket) => total + pocket.value.value, 0);
+    this.total = this.pockets!.controls.reduce((total, pocket) => total + pocket.value.value, 0);
     this.total = Math.round(this.total * 100) / 100;
     return this.total === this.account.value ? null : { noTotal: true };
   }
@@ -65,11 +67,12 @@ export class PocketsComponent implements OnInit, AfterViewInit {
       name: [pocket?.name, Validators.required],
       value: [pocket?.value ?? 0, IsNumber]
     });
-    this.pockets.push(newPocket);
+    this.pockets!.push(newPocket);
   }
 
   deletePocket(index: number) {
-    this.pockets.removeAt(index);
+    this.pockets!.removeAt(index);
+    this.pockets!.markAsDirty();
   }
 
   dragPocket({ from, to, complete }: ItemReorderEventDetail) {
@@ -78,12 +81,12 @@ export class PocketsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const scroll = this.scrollElement.scrollTop;
-    const reorderedPockets = complete(this.pockets.value) as Pocket[];
-    this.pockets.clear();
+    const scroll = this.scrollElement?.scrollTop;
+    const reorderedPockets = complete(this.pockets!.value) as Pocket[];
+    this.pockets!.clear();
     reorderedPockets.forEach(pocket => this.addPocket(pocket));
-    this.pockets.markAsDirty();
-    this.scrollElement.scrollTo({ top: scroll });
+    this.pockets!.markAsDirty();
+    this.scrollElement!.scrollTo({ top: scroll });
   }
 
   save() {

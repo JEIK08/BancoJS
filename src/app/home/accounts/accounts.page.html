@@ -17,35 +17,34 @@
     <ion-accordion-group multiple [value]="accordeonValues">
       <ion-reorder-group [disabled]="!disableReorder" (ionItemReorder)="accounts = $event.detail.complete(accounts)">
         @for (account of accounts; track account.id) {
-          <ion-accordion
-            toggleIconSlot="start"
-            [toggleIcon]="account.isActive ? 'chevron-down-outline' : null"
-            [readonly]="!account.isActive"
-            [value]="account.id"
-            (contextmenu)="selectedAccount = account"
-          >
-            <ion-item slot="header">
-              <ion-label>
-                {{ account.name }}
-                @if (account.pockets?.[0]?.value; as debt) {
-                  <p class="color-value IN">{{ account.value - debt | currency:'':'$ ':'1.2-2' }}</p>
-                }
-              </ion-label>
+          @if (account.isActive) {
+            <ion-accordion
+              toggleIconSlot="start"
+              toggleIcon="chevron-down-outline"
+              [value]="account.id"
+              (contextmenu)="selectedAccount = account"
+            >
+              <ion-item slot="header">
+                <ion-label>
+                  {{ account.name }}
+                  @if (account.pockets[0].value; as debt) {
+                    <p class="color-value IN">{{ account.value - debt | currency:'':'$ ':'1.2-2' }}</p>
+                  }
+                </ion-label>
 
-              <ion-text slot="end" class="ion-text-end">
-                <span class="bold-value color-value" [ngClass]="account.isActive ? 'IN' : 'OUT'">
-                  {{ account.value | currency:'':'$ ':'1.2-2' }}
-                </span>
-                @if (account.pockets?.[0]?.value; as debt) {
-                  <br>
-                  <small class="color-value OUT">(- {{ debt | currency:'':'$ ':'1.2-2' }})</small>
-                }
-              </ion-text>
+                <ion-text slot="end" class="ion-text-end">
+                  <span class="bold-value color-value IN">
+                    {{ account.value | currency:'':'$ ':'1.2-2' }}
+                  </span>
+                  @if (account.pockets[0].value; as debt) {
+                    <br>
+                    <small class="color-value OUT">(- {{ debt | currency:'':'$ ':'1.2-2' }})</small>
+                  }
+                </ion-text>
 
-              <ion-reorder slot="end" />
-            </ion-item>
+                <ion-reorder slot="end" />
+              </ion-item>
 
-            @if (account.isActive) {
               <ion-list slot="content">
                 @for (pocket of account.pockets; track pocket.name; let isFirst = $first) {
                   <ion-item>
@@ -54,8 +53,23 @@
                   </ion-item>
                 }
               </ion-list>
-            }
-          </ion-accordion>
+            </ion-accordion>
+          } @else {
+            <ion-accordion readonly toggleIconSlot="start" [toggleIcon]="null" (contextmenu)="selectedAccount = account">
+              <ion-item slot="header">
+                <ion-label>
+                  {{ account.name }}
+                  <p class="color-value IN">{{ account.limit - account.value | currency:'':'$ ':'1.2-2' }}</p>
+                </ion-label>
+
+                <ion-text slot="end" class="ion-text-end">
+                  <span class="bold-value color-value OUT">{{ account.value | currency:'':'$ ':'1.2-2' }}</span>
+                </ion-text>
+
+                <ion-reorder slot="end" />
+              </ion-item>
+            </ion-accordion>
+          }
         }
       </ion-reorder-group>
     </ion-accordion-group>
@@ -72,7 +86,7 @@
   <ion-modal [isOpen]="!!selectedAccount" (didDismiss)="selectedAccount = undefined">
     <ng-template>
       @if (selectedAccount) {
-        <app-pockets [account]="selectedAccount" (closeModal)="selectedAccount = undefined" />
+        <app-account-settings [account]="selectedAccount" (closeModal)="selectedAccount = undefined" />
       }
     </ng-template>
   </ion-modal>

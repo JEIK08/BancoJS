@@ -15,10 +15,15 @@ interface AccountData {
 }
 
 interface ActiveAccount {
+  monthExpenses: {
+    value: number;
+    lastUpdate: Date;
+  }
   pockets: Pocket[];
 }
 
 interface PassiveAccount {
+  limit: number;
 }
 
 export interface Pocket {

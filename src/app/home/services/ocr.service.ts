@@ -162,6 +162,7 @@ export class OcrService {
 
   terminate() {
     this.worker?.terminate();
+    SendIntent.finish();
   }
 
 }
