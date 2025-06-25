@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
-import { Platform, ViewWillEnter } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { AuthService } from '../services/auth.service';
 import { AccountService } from './services/accounts.service';
@@ -10,6 +10,7 @@ import { OcrService } from './services/ocr.service';
 
 import { TransactionFormComponent } from './transaction-form/transaction-form.component';
 import { IMPORTS, addComponentIcons } from './home.utils';
+import { TransactionType } from '../interfaces/transaction';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,8 @@ import { IMPORTS, addComponentIcons } from './home.utils';
   standalone: true,
   imports: IMPORTS
 })
-export default class HomeComponent implements ViewWillEnter {
+export default class HomeComponent {
+
   @ViewChild(TransactionFormComponent) public transactionForm!: TransactionFormComponent;
 
   public isFormOpen = false;
@@ -39,21 +41,30 @@ export default class HomeComponent implements ViewWillEnter {
     this.platform.ready()
       .then(() => this.ocrService.getIntentData())
       .then(image => {
-        if (!image) return;
+        if (!image) {
+          this.accountService.listenAccounts();
+          return;
+        }
         this.isProcessingImg = true;
         return this.ocrService.getImageData(image);
       })
       .then(data => {
         if (!data) return;
-        this.isFormOpen = true;
-        setTimeout(() => {
-          this.transactionForm.initFormWith(data);
-          this.isProcessingImg = false;
-        });
+        this.openFormWith(data);
+        this.isProcessingImg = false;
       }).catch(() => {
         this.isProcessingImg = false;
         this.showIntentError = true;
       });
+
+    this.accountService.onChangeBoxValue().subscribe(difference => {
+      this.openFormWith({
+        type: TransactionType.IN,
+        value: difference,
+        date: new Date(),
+        account: environment.accounts.active
+      });
+    });
   }
 
   logOut() {
@@ -65,10 +76,6 @@ export default class HomeComponent implements ViewWillEnter {
     });
   }
 
-  ionViewWillEnter() {
-    this.accountService.listenAccounts();
-  }
-
   selectFile(event: any) {
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
@@ -77,13 +84,17 @@ export default class HomeComponent implements ViewWillEnter {
     reader.onload = () => {
       this.ocrService.getImageData(reader.result as string).then(data => {
         this.isProcessingImg = false;
-        this.isFormOpen = true;
-        setTimeout(() => this.transactionForm.initFormWith(data));
+        this.openFormWith(data);
       }).catch(() => {
         this.isProcessingImg = false;
         this.showIntentError = true;
       });
     };
+  }
+
+  private openFormWith(data: any) {
+    this.isFormOpen = true;
+    setTimeout(() => this.transactionForm.initFormWith(data));
   }
 
   closeIntent() {

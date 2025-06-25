@@ -107,11 +107,6 @@ export class FirestoreService {
   updateDocument<T>(collectionName: Collection, id: string, data: Partial<T>) {
     return from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
   }
-  
-  setDocument(collectionName: Collection, id: string, data: any) {
-    data.debt = deleteField();
-    from(updateDoc(this.getDocumentRef(collectionName, id) as any, data as any));
-  }
 
   mapDate(date: any) {
     return new Date(date.seconds * 1000);

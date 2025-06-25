@@ -20,6 +20,19 @@
           </ion-label>
         </ion-item>
 
+        <ion-item class="value-item">
+          <ion-input
+            readonly
+            label="Valor Cajita de Ahorros"
+            [helperText]="form.value.boxValue | currency:'':'$ ':'1.2-2'"
+          />
+          <ion-input formControlName="boxValue" slot="end" type="number" />
+        </ion-item>
+
+        <ion-item-divider color="medium">
+          <ion-label>Bolsillos</ion-label>
+        </ion-item-divider>
+
         <ion-reorder-group formArrayName="pockets" [disabled]="false" (ionItemReorder)="dragPocket($event.detail)">
           @for (pocket of pockets!.controls; track pocket; let i = $index) {
             <ion-item class="value-item" [formGroupName]="i" [ngClass]="{ 'debt-pocket': i === 0 }">

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, concatMap, debounceTime, map, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, debounceTime, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { orderBy } from '@angular/fire/firestore';
 
 import { Collection, FirestoreService } from '../../services/firestore.service';
@@ -11,12 +11,18 @@ import { Account } from '../../interfaces/account';
 export class AccountService {
 
   private accountsSubject: BehaviorSubject<Account[] | undefined>;
+  private accountsObservable: Observable<Account[] | undefined>;
+  private boxValueSubject: Subject<number>;
+  private boxValueObservable: Observable<number>;
 
   constructor(
     private firestoreService: FirestoreService,
     private authService: AuthService,
   ) {
     this.accountsSubject = new BehaviorSubject(undefined as any);
+    this.accountsObservable = this.accountsSubject.asObservable();
+    this.boxValueSubject = new Subject();
+    this.boxValueObservable = this.boxValueSubject.asObservable();
   }
 
   listenAccounts() {
@@ -51,7 +57,15 @@ export class AccountService {
   }
 
   getAccounts() {
-    return this.accountsSubject;
+    return this.accountsObservable;
+  }
+
+  changeBoxValue(difference: number) {
+    this.boxValueSubject.next(difference);
+  }
+
+  onChangeBoxValue() {
+    return this.boxValueObservable;
   }
 
   createAccount({ name, isActive }: Pick<Account, 'name' | 'isActive'>) {

@@ -19,6 +19,7 @@ interface ActiveAccount {
     value: number;
     lastUpdate: Date;
   }
+  boxValue: number;
   pockets: Pocket[];
 }
 

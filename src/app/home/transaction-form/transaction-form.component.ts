@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, DestroyRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, debounceTime, filter, map, merge, pairwise, startWith, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, merge, pairwise, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AccountService } from 'src/app/home/services/accounts.service';
@@ -42,7 +42,7 @@ export class TransactionFormComponent {
   ) {
     addComponentIcons();
 
-    this.accountService.getAccounts().subscribe(accounts => {
+    this.accountService.getAccounts().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(accounts => {
       this.accounts = accounts;
       this.activeAccounts = accounts?.filter(({ isActive }) => isActive);
     });

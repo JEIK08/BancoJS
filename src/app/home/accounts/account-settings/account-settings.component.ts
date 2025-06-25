@@ -34,7 +34,7 @@ export class AccountSettingsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private accountService: AccountService,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder
   ) {
     addComponentIcons();
   }
@@ -47,6 +47,7 @@ export class AccountSettingsComponent implements OnInit, AfterViewInit {
       this.form.addControl('pockets', this.pockets);
       this.account.pockets.forEach(pocket => this.addPocket(pocket));
       this.form.setValidators(() => this.validatePockets());
+      this.form.addControl('boxValue', this.formBuilder.control(this.account.boxValue, IsNumber));
     } else {
       this.form.addControl('limit', this.formBuilder.control(this.account.limit, IsNumber));
     }
@@ -94,7 +95,15 @@ export class AccountSettingsComponent implements OnInit, AfterViewInit {
       this.closeModal.emit();
     } else {
       this.isLoading = true;
-      this.accountService.updateAccount(this.account.id, this.form.value).subscribe(() => this.closeModal.emit());
+      this.accountService.updateAccount(this.account.id, this.form.value).subscribe(() => {
+        this.closeModal.emit();
+        if (!this.account.isActive) return;
+
+        const oldBoxalue = this.account.boxValue;
+        const newBoxalue = this.form.value.boxValue;
+        if (newBoxalue === oldBoxalue) return;
+        this.accountService.changeBoxValue(newBoxalue - oldBoxalue);
+      });
     }
   }
 
