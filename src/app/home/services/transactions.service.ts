@@ -29,7 +29,7 @@ export class TransactionsService {
     const destinationPocket: Pocket | undefined = data.destination?.pocket;
 
     const transaction: Transaction = {
-      description: data.description ?? originPocket?.name ?? destinationPocket?.name,
+      description: data.description || originPocket?.name || destinationPocket?.name,
       type,
       value,
       date: this.firestoreService.getDate(data.date),
@@ -98,14 +98,14 @@ export class TransactionsService {
 
       destination.value = Math.round(destination.value * 100) / 100;
       destinationBody.value = destination.value;
-      
+
       requests$.push(
         this.firestoreService.updateDocument<Account>(Collection.Account, destination.id, destinationBody)
       );
     }
 
     requests$.push(this.firestoreService.addDocument(Collection.Transaction, transaction));
-    
+
     return from(requests$).pipe(concatMap(req$ => req$), takeLast(1));
   }
 
@@ -162,7 +162,7 @@ export class TransactionsService {
               lastDate = transaction.dateText;
             }
           }
-          
+
           return filteredPage.length == this.pageSize;
         });
 

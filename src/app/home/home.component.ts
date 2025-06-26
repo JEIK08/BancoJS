@@ -28,6 +28,7 @@ export default class HomeComponent {
   public isDev = !environment.production;
 
   private isLoggingOut = false;
+  private fromIntent = false;
 
   constructor(
     private platform: Platform,
@@ -37,14 +38,13 @@ export default class HomeComponent {
     private router: Router
   ) {
     addComponentIcons();
+    this.accountService.listenAccounts();
 
     this.platform.ready()
       .then(() => this.ocrService.getIntentData())
       .then(image => {
-        if (!image) {
-          this.accountService.listenAccounts();
-          return;
-        }
+        if (!image) return;
+        this.fromIntent = true;
         this.isProcessingImg = true;
         return this.ocrService.getImageData(image);
       })
@@ -98,7 +98,7 @@ export default class HomeComponent {
   }
 
   closeIntent() {
-    this.ocrService.terminate();
+    if (this.fromIntent) this.ocrService.terminate();
   }
 
 }
