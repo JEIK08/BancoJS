@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { delay, filter, take, tap } from 'rxjs';
 
 import { Platform } from '@ionic/angular';
 
@@ -51,7 +52,6 @@ export default class HomeComponent {
       .then(data => {
         if (!data) return;
         this.openFormWith(data);
-        this.isProcessingImg = false;
       }).catch(() => {
         this.isProcessingImg = false;
         this.showIntentError = true;
@@ -83,7 +83,6 @@ export default class HomeComponent {
 
     reader.onload = () => {
       this.ocrService.getImageData(reader.result as string).then(data => {
-        this.isProcessingImg = false;
         this.openFormWith(data);
       }).catch(() => {
         this.isProcessingImg = false;
@@ -93,8 +92,15 @@ export default class HomeComponent {
   }
 
   private openFormWith(data: any) {
-    this.isFormOpen = true;
-    setTimeout(() => this.transactionForm.initFormWith(data));
+    this.accountService.getAccounts().pipe(
+      filter(accounts => !!accounts),
+      take(1),
+      tap(() => this.isFormOpen = true),
+      delay(0)
+    ).subscribe(() => {
+      this.isProcessingImg = false;
+      this.transactionForm.initFormWith(data);
+    });
   }
 
   closeIntent() {

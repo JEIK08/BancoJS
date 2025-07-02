@@ -20,14 +20,16 @@
           </ion-label>
         </ion-item>
 
-        <ion-item class="value-item">
-          <ion-input
-            readonly
-            label="Valor Cajita de Ahorros"
-            [helperText]="form.value.boxValue | currency:'':'$ ':'1.2-2'"
-          />
-          <ion-input formControlName="boxValue" slot="end" type="number" />
-        </ion-item>
+        @if (account.boxValue) {
+          <ion-item class="value-item">
+            <ion-input
+              readonly
+              label="Valor Cajita de Ahorros"
+              [helperText]="form.value.boxValue | currency:'':'$ ':'1.2-2'"
+            />
+            <ion-input formControlName="boxValue" slot="end" type="number" />
+          </ion-item>
+        }
 
         <ion-item-divider color="medium">
           <ion-label>Bolsillos</ion-label>
