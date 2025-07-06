@@ -7,13 +7,15 @@ import { AuthService } from 'src/app/services/auth.service';
 
 import { Account } from '../../interfaces/account';
 
+type BoxData = { accountId: string, difference: number };
+
 @Injectable()
 export class AccountService {
 
   private accountsSubject: BehaviorSubject<Account[] | undefined>;
   private accountsObservable: Observable<Account[] | undefined>;
-  private boxValueSubject: Subject<number>;
-  private boxValueObservable: Observable<number>;
+  private boxValueSubject: Subject<BoxData>;
+  private boxValueObservable: Observable<BoxData>;
 
   constructor(
     private firestoreService: FirestoreService,
@@ -60,8 +62,8 @@ export class AccountService {
     return this.accountsObservable;
   }
 
-  changeBoxValue(difference: number) {
-    this.boxValueSubject.next(difference);
+  changeBoxValue(data: BoxData) {
+    this.boxValueSubject.next(data);
   }
 
   onChangeBoxValue() {

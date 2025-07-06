@@ -104,7 +104,7 @@ export class AccountSettingsComponent implements OnInit, AfterViewInit {
         const oldBoxalue = this.account.boxValue;
         const newBoxalue = this.form.value.boxValue;
         if (newBoxalue === oldBoxalue) return;
-        this.accountService.changeBoxValue(newBoxalue - oldBoxalue);
+        this.accountService.changeBoxValue({ accountId: this.account.id, difference: newBoxalue - oldBoxalue });
       });
     }
   }

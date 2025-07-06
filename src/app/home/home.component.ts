@@ -57,12 +57,12 @@ export default class HomeComponent {
         this.showIntentError = true;
       });
 
-    this.accountService.onChangeBoxValue().subscribe(difference => {
+    this.accountService.onChangeBoxValue().subscribe(({ accountId, difference }) => {
       this.openFormWith({
         type: TransactionType.IN,
         value: difference,
         date: new Date(),
-        account: environment.accounts.active
+        account: accountId
       });
     });
   }

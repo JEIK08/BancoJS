@@ -37,7 +37,7 @@ export class OcrService {
         ...await this.processImage(
           { left: 64, top: 252, width: 544, height: 145 },
           'Comprobante de transferencia',
-          { left: 65, top: 445, width: 477, height: 42 },
+          { left: 65, top: 444, width: 600, height: 42 },
           /(\d{2}) (\w{3}) (\d{4}) - (\d{2}):(\d{2}):(\d{2})/,
           ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'],
           { left: 628, top: 610, width: 388, height: 45 }
@@ -53,8 +53,8 @@ export class OcrService {
         ...await this.processImage(
           { left: 65, top: 2174, width: 118, height: 30 },
           'Cuotas',
-          { left: 67, top: 821, width: 700, height: 43 },
-          /(\d{2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
+          { left: 67, top: 821, width: 900, height: 43 },
+          /(\d{1,2}) de (\w+) de (\d{4}), (\d{2}):(\d{2})/,
           ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
           { left: 66, top: 689, width: 607, height: 73 }
         )
@@ -68,7 +68,7 @@ export class OcrService {
         ...await this.processImage(
           { left: 65, top: 193, width: 698, height: 77 },
           '¡Has enviado dinero!',
-          { left: 62, top: 299, width: 469, height: 60 },
+          { left: 62, top: 299, width: 469, height: 52 },
           /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
           ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
           { left: 65, top: 1263, width: 264, height: 38 },
@@ -83,7 +83,7 @@ export class OcrService {
         ...await this.processImage(
           { left: 64, top: 252, width: 940, height: 159 },
           'Comprobante de compra con tarjeta de débito',
-          { left: 65, top: 444, width: 382, height: 42 },
+          { left: 65, top: 444, width: 500, height: 42 },
           /(\d{2}) (\w{3}) (\d{4}) (\d{2}):(\d{2})/,
           ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'],
           { left: 614, top: 610, width: 402, height: 44 },
@@ -98,7 +98,7 @@ export class OcrService {
         ...await this.processImage(
           { left: 67, top: 259, width: 682, height: 72 },
           '¡Listo! Hiciste tu pago',
-          { left: 66, top: 362, width: 306, height: 39 },
+          { left: 66, top: 362, width: 400, height: 39 },
           /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
           ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
           { left: 65, top: 964, width: 343, height: 38 },
@@ -113,7 +113,7 @@ export class OcrService {
         ...await this.processImage(
           { left: 75, top: 1030, width: 730, height: 44 },
           'Aceptada Transferencia interbancaria',
-          { left: 67, top: 907, width: 350, height: 45 },
+          { left: 67, top: 907, width: 400, height: 45 },
           /(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/,
           ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
           { left: 65, top: 775, width: 651, height: 75 },
