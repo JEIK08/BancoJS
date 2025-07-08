@@ -121,6 +121,22 @@ export class OcrService {
       };
     } catch (e) { this.processError('Interbank in', e) };
 
+    try {
+      return {
+        type: TransactionType.TRANSFER,
+        account: environment.accounts.active,
+        destination: environment.accounts.pasive,
+        ...await this.processImage(
+          { left: 65, top: 278, width: 804, height: 75 },
+          'Comprobante de tu pago',
+          { left: 65, top: 382, width: 600, height: 49 },
+          /(\d{2}) (\w+) (\d{4}) (\d{2}):(\d{2})/,
+          ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+          { left: 543, top: 652, width: 450, height: 48 },
+        )
+      };
+    } catch (e) { this.processError('Pay credit card', e) };
+
     throw 404;
   }
 
@@ -148,7 +164,7 @@ export class OcrService {
 
     result = await this.worker!.recognize(this.base64!, { rectangle: valueRectangle });
     const valueText = result.data.text.trim();
-    if (!(/^\$\d{1,3}(\.\d{3})*(,\d{2})?$/.test(valueText))) throw 'Wrong value';
+    if (!(/^\$ ?\d{1,3}(\.\d{3})*(,\d{2})?$/.test(valueText))) throw 'Wrong value';
     const values = valueText.substring(1).split(',');
     values[0] = values[0].replaceAll('.', '');
 
