@@ -47,7 +47,9 @@ export default class HomeComponent {
         if (!image) return;
         this.fromIntent = true;
         this.isProcessingImg = true;
-        return this.ocrService.getImageData(image);
+        const data = this.ocrService.getImageData(image);
+        if (data) return data;
+        else throw 'Not supported';
       })
       .then(data => {
         if (!data) return;
@@ -82,12 +84,16 @@ export default class HomeComponent {
     this.isProcessingImg = true;
 
     reader.onload = () => {
-      this.ocrService.getImageData(reader.result as string).then(data => {
-        this.openFormWith(data);
-      }).catch(() => {
-        this.isProcessingImg = false;
-        this.showIntentError = true;
-      });
+      this.ocrService.convertToBlackAndWhite(reader.result as string)
+        .then(data => this.ocrService.getImageData(data))
+        .then(formData => {
+          if (!formData) throw 'Not supported';
+          this.openFormWith(formData)
+        })
+        .catch(() => {
+          this.isProcessingImg = false;
+          this.showIntentError = true;
+        });
     };
   }
 
